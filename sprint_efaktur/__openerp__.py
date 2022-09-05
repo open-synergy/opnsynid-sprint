@@ -13,6 +13,7 @@
     ],
     "data": [
         "data/ir_actions_server_data.xml",
+        "data/ir_values_data.xml",
     ],
     "installable": True,
     "auto_install": False,
