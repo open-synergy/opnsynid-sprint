@@ -4,7 +4,6 @@
   <record id="account_invoice_view_form" model="ir.ui.view">
       <field name="name">account.invoice - Klik Pajak</field>
       <field name="model">account.invoice</field>
-      <field name="priority" eval="1" />
       <field
                 name="inherit_id"
                 ref="l10n_id_taxform_faktur_pajak_common.account_invoice_view_form"
@@ -20,7 +19,7 @@
                                 string="Submit"
                                 class="oe_highlight"
                                 colspan="2"
-                                attrs="{'invisible':[('klikpajak_id','!=',0)]}"
+                                attrs="{'invisible':['|', ('lock_taxform','!=',True), ('klikpajak_id','!=',0)]}"
                             />
                         <button
                                 name="action_klikpajak_approve_sale_invoice"
