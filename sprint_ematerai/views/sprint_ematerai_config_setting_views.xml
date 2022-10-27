@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2018 OpenSynergy Indonesia
+     Copyright 2020 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<openerp>
+<data>
+
+<record id="sprint_ematerai_config_setting_view_form" model="ir.ui.view">
+    <field name="name">sprint.ematerai.config.setting.view.form</field>
+    <field name="model">sprint.ematerai_config_setting</field>
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <form class="oe_form_configuration">
+            <header>
+                <button
+                            name="execute"
+                            string="Apply"
+                            type="object"
+                            class="oe_highlight"
+                        />
+                or
+                <button name="cancel" string="Cancel" type="object" class="oe_link" />
+            </header>
+            <field name="company_id" invisible="1" />
+            <separator string="E-Materai" />
+            <group name="sprint_ematerai_config">
+                <label for="id" string="General" />
+                <div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_username"
+                                    string="Username"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_username" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_password"
+                                    string="Password"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_password" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_token"
+                                    string="Token"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_token" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_base_url"
+                                    string="Base URL"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_base_url" class="oe_inline" />
+                    </div>
+                </div>
+                <label for="id" string="API" />
+                <div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_api_token"
+                                    string="API Token"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_api_token" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_download"
+                                    string="API Download Doc."
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_download" class="oe_inline" />
+                    </div>
+                </div>
+            </group>
+        </form>
+    </field>
+</record>
+
+
+<record id="sprint_ematerai_config_setting_action" model="ir.actions.act_window">
+    <field name="name">Sprint E-Materai Configuration</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">sprint.ematerai_config_setting</field>
+    <field name="view_type">form</field>
+    <field name="target">inline</field>
+    <field name="view_mode">form</field>
+</record>
+
+<menuitem
+            id="sprint_ematerai_config_setting_menu"
+            name="Sprint E-Materai"
+            parent="base.menu_config"
+            action="sprint_ematerai_config_setting_action"
+            sequence="100"
+        />
+
+
+</data>
+</openerp>

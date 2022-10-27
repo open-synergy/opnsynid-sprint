@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 OpenSynergy Indonesia
+     Copyright 2022 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl-3.0-standalone.html). -->
+<openerp>
+    <data>
+
+    <record id="sprint_ematerai_type_view_search" model="ir.ui.view">
+        <field name="name">sprint.ematerai.type.search</field>
+        <field name="model">sprint.ematerai_type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="id" />
+                <field name="name" />
+                <field name="code" />
+                <field name="model_id" />
+                <field name="report_id" />
+            </search>
+        </field>
+    </record>
+
+    <record id="sprint_ematerai_type_view_tree" model="ir.ui.view">
+        <field name="name">sprint.ematerai.type.tree</field>
+        <field name="model">sprint.ematerai_type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="id" />
+                <field name="code" />
+                <field name="name" />
+                <field name="active" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="sprint_ematerai_type_view_form" model="ir.ui.view">
+        <field name="name">sprint.ematerai.type.form</field>
+        <field name="model">sprint.ematerai_type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <header />
+                    <div name="div_smart_buttons" class="oe_right oe_button_box" />
+                    <group name="group_1" colspan="4" col="2">
+                        <group name="group_1_1">
+                            <field name="name" />
+                            <field name="code" />
+                            <field name="model_id" />
+                            <field name="model" />
+                            <field name="active" />
+                        </group>
+                        <group name="group_1_2">
+                            <field name="ematerai_name" />
+                            <field
+                                    name="allowed_report_ids"
+                                    widget="many2many_tags"
+                                    invisible="1"
+                                />
+                            <field
+                                    name="report_id"
+                                    widget="selection"
+                                    domain="[('id','in',allowed_report_ids[0][2])]"
+                                />
+                            <field name="keyword" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="note" string="Note">
+                            <field name="note" colspan="4" nolabel="1" />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sprint_ematerai_type_action" model="ir.actions.act_window">
+        <field name="name">E-Materai Type</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sprint.ematerai_type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+            id="sprint_ematerai_type_menu"
+            name="Type"
+            parent="sprint_ematerai_type_root_menu"
+            action="sprint_ematerai_type_action"
+            sequence="10"
+        />
+
+</data>
+</openerp>
