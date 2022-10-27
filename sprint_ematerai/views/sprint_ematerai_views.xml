@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 OpenSynergy Indonesia
+     Copyright 2022 PT. Simetri Sinergi Indonesia
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html). -->
+<openerp>
+    <data>
+    <record id="sprint_ematerai_view_tree" model="ir.ui.view">
+        <field name="name">sprint.ematerai.tree</field>
+        <field name="model">sprint.ematerai</field>
+        <field name="arch" type="xml">
+            <tree string="E-Materai Document" editable="bottom">
+                <field name="type_id" />
+                <field name="original_attachment_id" invisible="1" />
+                <field name="original_datas_fname" invisible="1" />
+                <field
+                        name="original_attachment_data"
+                        widget="binary"
+                        filename="original_datas_fname"
+                    />
+                <field name="ematerai_attachment_id" invisible="1" />
+                <field name="ematerai_datas_fname" invisible="1" />
+                <field
+                        name="ematerai_attachment_data"
+                        widget="binary"
+                        filename="ematerai_datas_fname"
+                    />
+                <field name="state" />
+                <button
+                        name="action_generate_ematerai"
+                        string="Generate E-Materai"
+                        type="object"
+                        icon="gtk-apply"
+                        confirm="Generate E-Materai. Are you sure?"
+                        attrs="{'invisible':[('state','=', 'success')]}"
+                    />
+            </tree>
+        </field>
+    </record>
+</data>
+</openerp>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+<record id="sprint_create_ematerai_view_form" model="ir.ui.view">
+    <field name="name">Create E-Materai Document</field>
+    <field name="model">sprint.create.ematerai</field>
+    <field name="arch" type="xml">
+        <form>
+            <group name="group_1" colspan="4" col="2">
+                <field
+                            name="allowed_ematerai_type_ids"
+                            widget="many2many_tags"
+                            invisible="1"
+                        />
+                <field
+                            name="ematerai_type_id"
+                            widget="selection"
+                            domain="[('id','in',allowed_ematerai_type_ids[0][2])]"
+                        />
+            </group>
+            <footer>
+                <button
+                            string="Create"
+                            name="action_create"
+                            type="object"
+                            class="oe_highlight"
+                            confirm="Create E-Materai. Are you sure?"
+                        />
+                or
+                <button string="Cancel" class="oe_link" special="cancel" />
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="sprint_create_ematerai_action" model="ir.actions.act_window">
+    <field name="name">Create E-Materai Document</field>
+    <field name="res_model">sprint.create.ematerai</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="sprint_create_ematerai_view_form" />
+    <field name="target">new</field>
+</record>
+</data>
+</openerp>

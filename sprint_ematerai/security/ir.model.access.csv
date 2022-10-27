@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sprint_ematerai_type_user,sprint.ematerai_type – User,model_sprint_ematerai_type,base.group_user,1,1,1,1
+sprint_ematerai_type_all,sprint.ematerai_type - All,model_sprint_ematerai_type,,1,0,0,0
+sprint_ematerai_user,sprint.ematerai – User,model_sprint_ematerai,base.group_user,1,1,1,1
+sprint_ematerai_all,sprint.ematerai - All,model_sprint_ematerai,,1,0,0,0
