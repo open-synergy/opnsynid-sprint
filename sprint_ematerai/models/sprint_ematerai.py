@@ -178,8 +178,9 @@ class SprintEmaterai(models.Model):
         finally:
             os.unlink(fname)
 
-        raise UserError(_("%s") % (response.content))
-        result = response.content
+        result = response.json()
+        # statuscode = result.get("statuscode", False)
+        # raise UserError(_("%s") % (result["statuscode"]))
         if result["statuscode"] == "00":
             self.write(self._prepare_download_document_data(result["file"]))
         else:
