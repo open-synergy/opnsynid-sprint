@@ -11,11 +11,6 @@
     "depends": [
         "base",
     ],
-    "external_dependencies": {
-        "python": [
-            "ghostscript",
-        ],
-    },
     "data": [
         "security/ir.model.access.csv",
         "menu.xml",
