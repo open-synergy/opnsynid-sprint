@@ -281,3 +281,16 @@ class AccountInvoice(models.Model):
             )
 
             raise UserError(str_error)
+
+    @api.multi
+    def action_cancel(self):
+        _super = super(AccountInvoice, self)
+        for document in self:
+            if document.klikpajak_id > 0:
+                msg_error = (
+                    "The invoice cannot be canceled "
+                    "because it already has a 'Faktur Pajak'"
+                )
+                raise UserError(msg_error)
+            else:
+                return _super.action_cancel()
