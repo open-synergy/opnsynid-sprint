@@ -68,16 +68,30 @@ class SprintEmaterai(models.Model):
     )
 
     @api.multi
+    def _get_model_record(self):
+        self.ensure_one()
+        obj = self.env[self.model]
+        record = obj.browse(self.res_id)
+        return record
+
+    @api.multi
     def _get_document(self, data):
         self.ensure_one()
+        record = self._get_model_record()
         obj_ir_attachment = self.env["ir.attachment"]
         datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = "ematerai_" + datetime_now
+
+        if self.model != "account.invoice":
+            document_name = record.name
+        else:
+            document_name = record.number
+
         ir_values = {
-            "name": filename,
+            "name": document_name,
             "type": "binary",
             "datas": data,
-            "datas_fname": filename + ".pdf",
+            "datas_fname": document_name + ".pdf",
             "store_fname": filename,
             "res_model": self._name,
             "res_id": self.id,
@@ -179,8 +193,6 @@ class SprintEmaterai(models.Model):
             os.unlink(fname)
 
         result = response.json()
-        # statuscode = result.get("statuscode", False)
-        # raise UserError(_("%s") % (result["statuscode"]))
         if result["statuscode"] == "00":
             self.write(self._prepare_download_document_data(result["file"]))
         else:
