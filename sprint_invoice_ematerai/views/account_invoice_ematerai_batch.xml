@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 OpenSynergy Indonesia
+     Copyright 2022 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<openerp>
+    <data>
+        <record id="account_invoice_ematerai_batch_view_tree" model="ir.ui.view">
+            <field name="name">account.invoice_ematerai_batch - Tree</field>
+            <field name="model">account.invoice_ematerai_batch</field>
+            <field
+                name="inherit_id"
+                ref="sprint_ematerai.sprint_ematerai_batch_view_tree"
+            />
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <data />
+            </field>
+        </record>
+
+        <record id="account_invoice_ematerai_batch_view_search" model="ir.ui.view">
+            <field name="name">account.invoice_ematerai_batch - Search</field>
+            <field name="model">account.invoice_ematerai_batch</field>
+            <field
+                name="inherit_id"
+                ref="sprint_ematerai.sprint_ematerai_batch_view_search"
+            />
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <data />
+            </field>
+        </record>
+
+        <record id="account_invoice_ematerai_batch_view_form" model="ir.ui.view">
+            <field name="name">account.invoice_ematerai_batch - Form</field>
+            <field name="model">account.invoice_ematerai_batch</field>
+            <field
+                name="inherit_id"
+                ref="sprint_ematerai.sprint_ematerai_batch_view_form"
+            />
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//page[@name='page_ematerai']" position='before'>
+                        <page name="page_invoice" string="Invoice(s)">
+                            <group name="grp_invoice" colspan="4" col="2">
+                                <field name="invoice_ids" nolabel="1">
+                                </field>
+                            </group>
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record
+            id="account_invoice_ematerai_batch_action"
+            model="ir.actions.act_window"
+        >
+            <field name="name">Invoice E-Materai Batch</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice_ematerai_batch</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="account_invoice_ematerai_batch_root_menu"
+            name="E-Materai"
+            parent="account.menu_finance"
+            sequence="7"
+        />
+        <menuitem
+            id="account_invoice_ematerai_batch_menu"
+            name="Invoice E-Materai Batch"
+            parent="account_invoice_ematerai_batch_root_menu"
+            action="account_invoice_ematerai_batch_action"
+            sequence="1"
+        />
+    </data>
+</openerp>

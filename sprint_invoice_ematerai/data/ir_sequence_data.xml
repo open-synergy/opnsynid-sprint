@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2023 OpenSynergy Indonesia
+     Copyright 2023 PT. Simetri Sinergi Indonesia
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl). -->
+<openerp>
+    <data noupdate="1">
+        <record id="sequence_invoice_ematerai_batch" model="ir.sequence">
+            <field name="name">Default Invoice E-materai Batch</field>
+            <field name="padding" eval="6" />
+            <field name="prefix">BATCH-INV-E/%(year)s/</field>
+            <field eval="1" name="number_increment" />
+            <field name="use_date_range" eval="1" />
+        </record>
+    </data>
+</openerp>
