@@ -10,6 +10,7 @@
         <field name="arch" type="xml">
             <tree string="E-Materai Document" editable="bottom">
                 <field name="type_id" />
+                <field name="ref" />
                 <field name="original_attachment_id" invisible="1" />
                 <field name="original_datas_fname" invisible="1" />
                 <field

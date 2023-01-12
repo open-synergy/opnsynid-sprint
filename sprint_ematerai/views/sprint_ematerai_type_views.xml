@@ -49,7 +49,7 @@
                             <field name="active" />
                         </group>
                         <group name="group_1_2">
-                            <field name="ematerai_name" />
+                            <field name="ematerai_name" invisible="1" />
                             <field
                                     name="allowed_report_ids"
                                     widget="many2many_tags"

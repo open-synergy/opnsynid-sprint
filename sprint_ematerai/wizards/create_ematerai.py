@@ -72,7 +72,7 @@ class CreateEmaterai(models.TransientModel):
         active_ids = self.env.context.get("active_ids", False)
         active_model = self.env.context.get("active_model", "")
         obj_report = self.env["ir.actions.report.xml"]
-        pdf = obj_report.render_report(active_ids, report_id.report_name, {})
+        pdf = obj_report.render_report([14], report_id.report_name, {})
 
         b64_pdf = base64.b64encode(pdf[0])
         datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -86,52 +86,6 @@ class CreateEmaterai(models.TransientModel):
             "res_model": active_model,
             "res_id": active_ids[0],
         }
-
-    # @api.multi
-    # def _prepare_attachment_data(self, report_id):
-    #     self.ensure_one()
-    #     active_ids = self.env.context.get("active_ids", False)
-    #     active_model = self.env.context.get("active_model", "")
-    #     obj_report = self.env["ir.actions.report.xml"]
-    #     pdf = obj_report.render_report(
-    #         active_ids, report_id.report_name, {})
-    #
-    #     # b64_pdf = base64.b64encode(pdf[0])
-    #     input_pdf = tempfile.NamedTemporaryFile()
-    #     output_pdf = tempfile.NamedTemporaryFile()
-    #
-    #     try:
-    #         input_pdf.write(pdf[0])
-    #         args = [
-    #             "downgradePDF",
-    #             "-sDEVICE=pdfwrite",
-    #             "-dCompatibilityLevel=1.6",
-    #             "-dNOPAUSE",
-    #             "-dQUIET",
-    #             "-dBATCH",
-    #             "-sOutputFile=" + output_pdf.name,
-    #             input_pdf.name,
-    #         ]
-    #         ghostscript.Ghostscript(*args)
-    #         output_pdf.seek(0)
-    #         b64_pdf_new = base64.b64encode(output_pdf.read())
-    #         msg_err = _("%s") % (output_pdf.read())
-    #         raise UserError(msg_err)
-    #     finally:
-    #         input_pdf.close()
-    #         output_pdf.close()
-    #
-    #     datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    #     filename = "report_" + datetime_now
-    #     return {
-    #         "name": filename,
-    #         "type": "binary",
-    #         "datas": b64_pdf_new,
-    #         "datas_fname": filename + ".pdf",
-    #         "store_fname": filename,
-    #         "res_model": active_model,
-    #         "res_id": active_ids[0],
-    #     }
 
     @api.multi
     def _action_create(self):

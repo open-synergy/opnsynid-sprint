@@ -58,7 +58,7 @@ class SprintEmateraiType(models.Model):
     )
     ematerai_name = fields.Char(
         string="E-Materai Name",
-        required=True,
+        required=False,
     )
     keyword = fields.Char(
         string="Keyword",
