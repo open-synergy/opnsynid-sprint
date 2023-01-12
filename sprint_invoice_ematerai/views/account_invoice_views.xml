@@ -12,6 +12,7 @@
                         name="%(sprint_ematerai.sprint_create_ematerai_action)d"
                         string="Create E-Materai"
                         type="action"
+                        attrs="{'invisible': [('state', 'in', ['draft', 'cancel'])]}"
                     />
                 </xpath>
                 <xpath expr="//notebook" position="inside">

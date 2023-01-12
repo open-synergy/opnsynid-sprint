@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2023 OpenSynergy Indonesia
+     Copyright 2023 PT. Simetri Sinergi Indonesia
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl). -->
+<openerp>
+<data>
+    <record id="base_invoice_ematerai_batch" model="base.sequence_configurator">
+        <field
+                name="model_id"
+                ref="sprint_invoice_ematerai.model_account_invoice_ematerai_batch"
+            />
+        <field
+                name="sequence_field_id"
+                search="[('model_id.model','=','account.invoice_ematerai_batch'),('name','=','name')]"
+            />
+        <field
+                name="fallback_sequence_id"
+                ref="sprint_invoice_ematerai.sequence_invoice_ematerai_batch"
+            />
+    </record>
+</data>
+</openerp>
