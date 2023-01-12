@@ -72,7 +72,7 @@ class CreateEmaterai(models.TransientModel):
         active_ids = self.env.context.get("active_ids", False)
         active_model = self.env.context.get("active_model", "")
         obj_report = self.env["ir.actions.report.xml"]
-        pdf = obj_report.render_report([14], report_id.report_name, {})
+        pdf = obj_report.render_report(active_ids, report_id.report_name, {})
 
         b64_pdf = base64.b64encode(pdf[0])
         datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
