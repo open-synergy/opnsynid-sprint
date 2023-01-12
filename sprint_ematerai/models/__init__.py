@@ -6,5 +6,6 @@ from . import (
     res_config_settings,
     res_company,
     sprint_ematerai,
+    sprint_ematerai_batch,
     mixin_sprint_ematerai,
 )

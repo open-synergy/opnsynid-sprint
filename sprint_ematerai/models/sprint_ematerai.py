@@ -58,6 +58,33 @@ class SprintEmaterai(models.Model):
         string="Type",
         comodel_name="sprint.ematerai_type",
     )
+    batch_id = fields.Many2one(
+        string="Batch ID",
+        comodel_name="sprint.ematerai_batch",
+        ondelete="restrict",
+        readonly=True,
+    )
+
+    @api.multi
+    @api.depends(
+        "model",
+        "res_id",
+    )
+    def _compute_get_reference(self):
+        for record in self:
+            obj = self.env[record.model]
+            obj_id = obj.browse(record.res_id)
+            if record.model != "account.invoice":
+                ref = obj_id.name
+            else:
+                ref = obj_id.number
+            record.ref = ref
+
+    ref = fields.Char(
+        string="Reference",
+        compute="_compute_get_reference",
+        store=True,
+    )
     state = fields.Selection(
         string="State",
         selection=[
@@ -77,21 +104,15 @@ class SprintEmaterai(models.Model):
     @api.multi
     def _get_document(self, data):
         self.ensure_one()
-        record = self._get_model_record()
         obj_ir_attachment = self.env["ir.attachment"]
         datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = "ematerai_" + datetime_now
 
-        if self.model != "account.invoice":
-            document_name = record.name
-        else:
-            document_name = record.number
-
         ir_values = {
-            "name": document_name,
+            "name": self.ref,
             "type": "binary",
             "datas": data,
-            "datas_fname": document_name + ".pdf",
+            "datas_fname": self.ref + ".pdf",
             "store_fname": filename,
             "res_model": self._name,
             "res_id": self.id,
@@ -163,7 +184,6 @@ class SprintEmaterai(models.Model):
         headers = {
             "Authorization": "Bearer " + company.sp_ematerai_token,
         }
-        ematerai_name = type.ematerai_name
         data = base64.decodestring(self.original_attachment_data)
 
         fobj = tempfile.NamedTemporaryFile(delete=False)
@@ -178,7 +198,7 @@ class SprintEmaterai(models.Model):
 
         payload = json.dumps(
             {
-                "name": ematerai_name,
+                "name": self.ref,
                 "keyword": type.keyword,
                 "file": filename,
             }
