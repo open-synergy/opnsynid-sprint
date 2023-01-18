@@ -14,3 +14,4 @@
 # To provide both the URL and a branch, use:
 opnsynid-l10n-indonesia-taxform https://github.com/open-synergy/opnsynid-l10n-indonesia-taxform.git 8.0
 opnsynid-partner-contact https://github.com/open-synergy/opnsynid-partner-contact.git 8.0
+opnsynid-account-invoicing https://github.com/open-synergy/opnsynid-account-invoicing.git 8.0
