@@ -1,6 +1,17 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+        <record id="account_invoice_view_tree" model="ir.ui.view">
+            <field name="name">customer.invoice.ematerai.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="priority" eval="100" />
+            <field name="inherit_id" ref="account.invoice_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="ematerai_total" />
+                </xpath>
+            </field>
+        </record>
         <record id="account_invoice_view_form" model="ir.ui.view">
             <field name="name">customer.invoice.ematerai.form</field>
             <field name="model">account.invoice</field>
