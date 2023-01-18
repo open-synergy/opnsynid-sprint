@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+account_invoice_update_print_info_user,account.invoice_update_print_info – User,model_account_invoice_update_print_info,account.group_account_user,1,1,1,1
+account_invoice_update_print_info_all,account.invoice_update_print_info – All,model_account_invoice_update_print_info,,1,0,0,0
