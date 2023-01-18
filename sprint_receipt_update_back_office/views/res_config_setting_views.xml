@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2023 OpenSynergy Indonesia
+     Copyright 2023 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<openerp>
+<data>
+
+<record id="sprint_backoffice_config_setting_view_form" model="ir.ui.view">
+    <field name="name">sprint.backoffice.config.setting.view.form</field>
+    <field name="model">sprint.backoffice_config_setting</field>
+    <field
+                name="inherit_id"
+                ref="sprint_back_office.sprint_backoffice_config_setting_view_form"
+            />
+    <field name="arch" type="xml">
+        <xpath expr="//div[@name='div_api']" position="inside">
+            <div>
+                <label
+                            for="sp_update_payment"
+                            string="API Update Payment"
+                            class="oe_inline"
+                        />
+                <field name="sp_update_payment" class="oe_inline" />
+            </div>
+        </xpath>
+    </field>
+</record>
+</data>
+</openerp>
