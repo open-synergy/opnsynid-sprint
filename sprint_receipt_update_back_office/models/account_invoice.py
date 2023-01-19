@@ -28,6 +28,7 @@ class AccountInvoice(models.Model):
             "pph23": 0.0,
             "pay_date": self.last_payment_date,
             "note": self.comment,
+            "selisih": self.residual,
         }
 
     @api.multi
