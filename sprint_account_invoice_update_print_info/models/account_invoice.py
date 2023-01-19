@@ -69,9 +69,9 @@ class AccountInvoice(models.Model):
         )
 
     @api.multi
-    def invoice_validate(self):
+    def action_number(self):
         _super = super(AccountInvoice, self)
-        res = _super.invoice_validate()
+        res = _super.action_number()
         for document in self:
             document._update_print_info()
         return res
