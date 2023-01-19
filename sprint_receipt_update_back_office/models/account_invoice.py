@@ -25,7 +25,7 @@ class AccountInvoice(models.Model):
             "no_invoice": self.internal_number,
             "total": self.amount_total,
             "payment": (self.amount_total - self.residual),
-            "pph23": self.amount_tax,
+            "pph23": 0.0,
             "pay_date": self.last_payment_date,
             "note": self.comment,
         }
