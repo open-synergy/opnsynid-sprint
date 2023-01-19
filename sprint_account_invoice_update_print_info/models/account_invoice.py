@@ -5,7 +5,7 @@ import json
 
 import requests
 from openerp import _, api, fields, models
-from openerp.exceptions import Warning as UserError
+from requests.exceptions import HTTPError
 
 
 class AccountInvoice(models.Model):
@@ -51,11 +51,22 @@ class AccountInvoice(models.Model):
             response = requests.request("POST", url, headers=headers, data=payload)
         except requests.exceptions.Timeout:
             msg_err = _("Timeout: the server did not reply within 30s")
-            raise UserError(msg_err)
+            resp_code = "TO"
+            resp_message = msg_err
+        except HTTPError as e:
+            resp_code = response.status_code
+            resp_message = e.response.text
 
-        result = response.json()
+        if response.status_code == 200:
+            result = response.json()
+            resp_code = result["code"]
+            resp_message = result["message"]
+        else:
+            resp_code = response.status_code
+            resp_message = response.reason
+
         obj_history.create(
-            self._prepare_update_print_info_data(result["code"], result["message"])
+            self._prepare_update_print_info_data(resp_code, resp_message)
         )
 
     @api.multi
