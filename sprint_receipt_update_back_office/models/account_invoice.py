@@ -1,7 +1,6 @@
 # Copyright 2023 OpenSynergy Indonesia
 # Copyright 2023 PT. Simetri Sinergi Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-import json
 
 import requests
 from openerp import _, api, fields, models
@@ -48,11 +47,11 @@ class AccountInvoice(models.Model):
         obj_history = self.env["account.invoice_update_payment_history"]
         base_url = self.company_id.sp_backoffice_url
         url = base_url + self.company_id.sp_update_payment
-        payload = json.dumps(self._prepare_update_payment_data())
+        params = self._prepare_update_payment_data()
         headers = {}
 
         try:
-            response = requests.request("POST", url, headers=headers, data=payload)
+            response = requests.request("POST", url, headers=headers, params=params)
         except requests.exceptions.Timeout:
             msg_err = _("Timeout: the server did not reply within 30s")
             resp_code = "TO"
