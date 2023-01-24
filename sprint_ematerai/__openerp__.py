@@ -4,7 +4,7 @@
 
 {
     "name": "Sprint E-Materai Integration",
-    "version": "8.0.2.2.0",
+    "version": "8.0.2.2.1",
     "license": "AGPL-3",
     "website": "https://simetri-sinergi.id",
     "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",

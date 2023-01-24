@@ -212,11 +212,13 @@ class SprintEmaterai(models.Model):
         finally:
             os.unlink(fname)
 
-        result = response.json()
-        if result["statuscode"] == "00":
+        if response.status_code == 200:
+            result = response.json()
             self.write(self._prepare_download_document_data(result["file"]))
         else:
-            msg_err = _("%s") % (result["description"])
+            resp_code = response.status_code
+            resp_message = response.reason
+            msg_err = _("%s - %s") % (resp_code, resp_message)
             raise UserError(msg_err)
 
     @api.multi
