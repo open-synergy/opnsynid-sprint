@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 account_invoice_update_payment_history_user,account.invoice_update_payment_history – User,model_account_invoice_update_payment_history,account.group_account_user,1,1,1,1
 account_invoice_update_payment_history_all,account.invoice_update_payment_history – All,model_account_invoice_update_payment_history,,1,0,0,0
+account_invoice_cancel_payment_history_user,account.invoice_cancel_payment_history – User,model_account_invoice_cancel_payment_history,account.group_account_user,1,1,1,1
+account_invoice_cancel_payment_history_all,account.invoice_cancel_payment_history – All,model_account_invoice_cancel_payment_history,,1,0,0,0
