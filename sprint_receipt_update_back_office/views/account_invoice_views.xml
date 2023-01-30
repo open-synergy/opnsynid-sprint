@@ -7,24 +7,43 @@
             <field name="priority" eval="100" />
             <field name="inherit_id" ref="account.invoice_form" />
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='payment_ids']" position="after">
-                    <separator string="Update Payment History" colspan="4" />
-                    <button
-                        name="action_manual_update_payment"
-                        string="Update Payment"
-                        type="object"
-                        attrs="{'invisible': [('state', 'in', ['draft', 'cancel', 'paid'])]}"
-                    />
-                    <group>
-                        <field name="update_payment_history_ids" nolabel="1">
-                            <tree>
-                                <field name="date" />
-                                <field name="source" />
-                                <field name="status_code" />
-                                <field name="status_msg" />
-                            </tree>
-                        </field>
-                    </group>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Update/Cancel Payment" groups="base.group_user">
+                        <separator string="Update Payment History" colspan="4" />
+                        <button
+                            name="action_manual_update_payment"
+                            string="Update Payment"
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel', 'paid'])]}"
+                        />
+                        <group>
+                            <field name="update_payment_history_ids" nolabel="1">
+                                <tree>
+                                    <field name="date" />
+                                    <field name="source" />
+                                    <field name="status_code" />
+                                    <field name="status_msg" />
+                                </tree>
+                            </field>
+                        </group>
+                        <separator string="Cancel Payment History" colspan="4" />
+                        <button
+                            name="action_manual_cancel_payment"
+                            string="Cancel Payment"
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel', 'paid'])]}"
+                        />
+                        <group>
+                            <field name="cancel_payment_history_ids" nolabel="1">
+                                <tree>
+                                    <field name="date" />
+                                    <field name="source" />
+                                    <field name="status_code" />
+                                    <field name="status_msg" />
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>

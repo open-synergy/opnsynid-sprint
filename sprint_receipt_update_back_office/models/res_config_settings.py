@@ -12,3 +12,7 @@ class SprintBackOfficeSettings(models.TransientModel):
         string="Update Payment",
         related="company_id.sp_update_payment",
     )
+    sp_cancel_payment = fields.Char(
+        string="Cancel Payment",
+        related="company_id.sp_cancel_payment",
+    )

@@ -10,3 +10,6 @@ class ResCompany(models.Model):
     sp_update_payment = fields.Char(
         string="Update Payment",
     )
+    sp_cancel_payment = fields.Char(
+        string="Cancel Payment",
+    )

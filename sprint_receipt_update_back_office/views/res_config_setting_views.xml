@@ -22,6 +22,14 @@
                         />
                 <field name="sp_update_payment" class="oe_inline" />
             </div>
+            <div>
+                <label
+                            for="sp_cancel_payment"
+                            string="API Cancel Payment"
+                            class="oe_inline"
+                        />
+                <field name="sp_cancel_payment" class="oe_inline" />
+            </div>
         </xpath>
     </field>
 </record>

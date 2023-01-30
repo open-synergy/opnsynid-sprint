@@ -5,6 +5,7 @@ from . import (
     res_company,
     res_config_settings,
     account_invoice_update_payment_history,
+    account_invoice_cancel_payment_history,
     account_invoice,
     account_move_line,
 )
