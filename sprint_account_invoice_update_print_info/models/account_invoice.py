@@ -40,6 +40,7 @@ class AccountInvoice(models.Model):
     @api.multi
     def _update_print_info(self):
         self.ensure_one()
+        response = None
         obj_history = self.env["account.invoice_update_print_info"]
         base_url = self.company_id.sp_backoffice_url
         url = base_url + self.company_id.sp_print_invoice
@@ -50,19 +51,24 @@ class AccountInvoice(models.Model):
             response = requests.request("POST", url, headers=headers, params=params)
         except requests.exceptions.Timeout:
             msg_err = _("Timeout: the server did not reply within 30s")
-            resp_code = "TO"
+            resp_code = "Timeout"
             resp_message = msg_err
         except HTTPError as e:
             resp_code = response.status_code
             resp_message = e.response.text
+        except BaseException as err:
+            msg_err = _("%s") % (err)
+            resp_code = "BaseException"
+            resp_message = msg_err
 
-        if response.status_code == 200:
-            result = response.json()
-            resp_code = result["code"]
-            resp_message = result["message"]
-        else:
-            resp_code = response.status_code
-            resp_message = response.reason
+        if response:
+            if response.status_code == 200:
+                result = response.json()
+                resp_code = result["code"]
+                resp_message = result["message"]
+            else:
+                resp_code = response.status_code
+                resp_message = response.reason
 
         obj_history.create(
             self._prepare_update_print_info_data(resp_code, resp_message)
