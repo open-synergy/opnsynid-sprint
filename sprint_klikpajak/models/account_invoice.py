@@ -10,7 +10,6 @@ import json
 import logging
 
 import requests
-import urllib2
 from openerp import _, api, fields, models
 from openerp.exceptions import Warning as UserError
 
@@ -142,28 +141,20 @@ class AccountInvoice(models.Model):
         url = url.replace("preview", "pdf")
         url = url.replace("public", "public/api")
         IrAttachment = self.env["ir.attachment"]
-        try:
-            r = urllib2.urlopen(url)
-            r_read = r.read()
-            # r = requests.get(url, allow_redirects=True)
-            # b64_pdf = base64.b64encode(r.content)
-            b64_pdf = base64.b64encode(r_read)
-            filename = "efaktur_" + self.nomor_seri_id.name
-            ir_values = {
-                "name": filename,
-                "type": "binary",
-                "datas": b64_pdf,
-                "datas_fname": filename + ".pdf",
-                "store_fname": filename,
-                "res_model": self._name,
-                "res_id": self.id,
-                "mimetype": "application/x-pdf",
-            }
-            attachment = IrAttachment.create(ir_values)
-        except Exception as e:
-            _logger.info(url)
-            _logger.info(e)
-            return False
+        r = requests.get(url, allow_redirects=True)
+        b64_pdf = base64.b64encode(r.content)
+        filename = "efaktur_" + self.nomor_seri_id.name
+        ir_values = {
+            "name": filename,
+            "type": "binary",
+            "datas": b64_pdf,
+            "datas_fname": filename + ".pdf",
+            "store_fname": filename,
+            "res_model": self._name,
+            "res_id": self.id,
+            "mimetype": "application/x-pdf",
+        }
+        attachment = IrAttachment.create(ir_values)
         return attachment
 
     @api.multi
@@ -269,9 +260,9 @@ class AccountInvoice(models.Model):
                     "klikpajak_invoice_link": data["tax_invoice_link"],
                 }
             )
-            # attachment = self._get_klikpajak_pdf(self.klikpajak_invoice_link)
-            # if attachment:
-            #     self._post_klikpajak_pdf(attachment)
+            attachment = self._get_klikpajak_pdf(self.klikpajak_invoice_link)
+            if attachment:
+                self._post_klikpajak_pdf(attachment)
         else:
             str_error = """Response code: {}
 
