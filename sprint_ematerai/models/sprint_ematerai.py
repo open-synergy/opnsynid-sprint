@@ -221,10 +221,11 @@ class SprintEmaterai(models.Model):
             if "file" not in result:
                 error_message = _(
                     """
-                Error: Download Failed
-                Response: %s
+                Message: %s
+                Description: %s
+                Status Code: %s
                 """
-                    % (result)
+                    % (result["message"], result["description"], result["statuscode"])
                 )
                 raise UserError(error_message)
             self.write(self._prepare_download_document_data(result["file"]))
