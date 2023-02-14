@@ -212,8 +212,21 @@ class SprintEmaterai(models.Model):
         finally:
             os.unlink(fname)
 
+        if not response:
+            msg_err = _("Error response")
+            raise UserError(msg_err)
+
         if response.status_code == 200:
             result = response.json()
+            if "file" not in result:
+                error_message = _(
+                    """
+                Error: Download Failed
+                Response: %s
+                """
+                    % (result)
+                )
+                raise UserError(error_message)
             self.write(self._prepare_download_document_data(result["file"]))
         else:
             resp_code = response.status_code
