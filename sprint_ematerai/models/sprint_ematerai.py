@@ -124,7 +124,10 @@ class SprintEmaterai(models.Model):
     def _prepare_download_document_data(self, data):
         self.ensure_one()
         attachment_id = self._get_document(data)
-        return {"ematerai_attachment_id": attachment_id, "state": "success"}
+        return {
+            "ematerai_attachment_id": attachment_id,
+            "state": "success",
+        }
 
     @api.multi
     def _get_token(self):
@@ -213,11 +216,21 @@ class SprintEmaterai(models.Model):
             os.unlink(fname)
 
         if not response:
-            msg_err = _("Error response")
+            msg_err = _("Can't retrieve response")
             raise UserError(msg_err)
 
         if response.status_code == 200:
-            result = response.json()
+            try:
+                result = response.json()
+            except ValueError as e:
+                error_message = _(
+                    """
+                Response: %s
+                Error: %s
+                """
+                    % (response.text, e)
+                )
+                raise UserError(error_message)
             if "file" not in result:
                 error_message = _(
                     """
@@ -232,8 +245,8 @@ class SprintEmaterai(models.Model):
         else:
             resp_code = response.status_code
             resp_message = response.reason
-            msg_err = _("%s - %s") % (resp_code, resp_message)
-            raise UserError(msg_err)
+            error_message = _("%s - %s") % (resp_code, resp_message)
+            raise UserError(error_message)
 
     @api.multi
     def _action_generate_ematerai(self):
