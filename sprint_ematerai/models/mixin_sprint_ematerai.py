@@ -35,6 +35,32 @@ class MixinSprintEmaterai(models.AbstractModel):
         string="E-Materai Total", compute="_compute_ematerai_total"
     )
 
+    @api.depends(
+        "sprint_ematerai_ids",
+        "sprint_ematerai_ids.state",
+    )
+    def _compute_last_ematerai_info(self):
+        for record in self:
+            ematerai_date = last_attachment_id = False
+            if record.sprint_ematerai_ids:
+                ematerai = record.sprint_ematerai_ids.sorted(
+                    key=lambda r: r.date and r.original_attachment_id.id, reverse=True
+                )[0]
+                ematerai_date = ematerai.date
+                last_attachment_id = ematerai.original_attachment_id.id
+            record.last_ematerai_date = ematerai_date
+            record.last_attachment_id = last_attachment_id
+
+    last_ematerai_date = fields.Date(
+        string="Last E-materai Date",
+        compute="_compute_last_ematerai_info",
+    )
+    last_attachment_id = fields.Many2one(
+        string="Last Attachment Report",
+        comodel_name="ir.attachment",
+        compute="_compute_last_ematerai_info",
+    )
+
     @api.multi
     def unlink(self):
         sprint_ematerai_ids = self.mapped("sprint_ematerai_ids")

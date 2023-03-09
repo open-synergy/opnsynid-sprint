@@ -26,6 +26,10 @@ class SprintEmaterai(models.Model):
         string="Related Document ID",
         index=True,
     )
+    date = fields.Date(
+        string="Date",
+        default=fields.Date.context_today,
+    )
     original_attachment_id = fields.Many2one(
         string="Attachment(Original)",
         comodel_name="ir.attachment",

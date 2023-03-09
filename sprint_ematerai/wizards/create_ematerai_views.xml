@@ -18,6 +18,11 @@
                             widget="selection"
                             domain="[('id','in',allowed_ematerai_type_ids[0][2])]"
                         />
+                <field name="check_date" invisible="1" />
+                <field
+                            name="use_previous_report"
+                            attrs="{'invisible': [('check_date', '&lt;&gt;', True)]}"
+                        />
             </group>
             <footer>
                 <button
