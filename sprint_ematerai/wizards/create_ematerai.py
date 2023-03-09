@@ -48,6 +48,41 @@ class CreateEmaterai(models.TransientModel):
         required=True,
     )
 
+    @api.model
+    def _default_check_date(self):
+        obj_ematerai_document = self.env["sprint.ematerai"]
+        active_id = self.env.context.get("active_id", False)
+        model_name = self.env.context.get("active_model", False)
+        date_now = datetime.now().strftime("%Y-%m-%d")
+        criteria = [
+            ("model", "=", model_name),
+            ("res_id", "=", active_id),
+            ("date", "=", date_now),
+        ]
+        count = obj_ematerai_document.search_count(criteria)
+        if count > 0:
+            return True
+
+        return False
+
+    check_date = fields.Boolean(
+        string="Check Date",
+        default=lambda self: self._default_check_date(),
+    )
+
+    use_previous_report = fields.Boolean(
+        string="Use Previous Report",
+        default=False,
+    )
+
+    @api.onchange(
+        "check_date",
+    )
+    def onchange_use_previous_report(self):
+        self.use_previous_report = False
+        if self.check_date:
+            self.use_previous_report = True
+
     @api.multi
     def action_create(self):
         for record in self:
@@ -58,13 +93,19 @@ class CreateEmaterai(models.TransientModel):
         self.ensure_one()
         model_name = self.env.context.get("active_model", False)
         active_id = self.env.context.get("active_id", False)
-        original_attachment_id = self._get_report_attachment()
-        return {
+        data = {
             "model": model_name,
             "res_id": active_id,
             "type_id": self.ematerai_type_id.id,
-            "original_attachment_id": original_attachment_id.id,
         }
+        if self.use_previous_report:
+            Model = self.env[model_name]
+            record = Model.browse([active_id])
+            data["original_attachment_id"] = record.last_attachment_id.id
+        else:
+            original_attachment_id = self._get_report_attachment()
+            data["original_attachment_id"] = original_attachment_id.id
+        return data
 
     @api.multi
     def _prepare_attachment_data(self, report_id):
