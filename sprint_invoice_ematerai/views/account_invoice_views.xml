@@ -28,6 +28,10 @@
                 </xpath>
                 <xpath expr="//notebook" position="inside">
                     <page string="E-Materai" name="page_ematerai">
+                        <group name="ematerai">
+                            <field name="last_ematerai_date" />
+                            <field name="last_attachment_id" />
+                        </group>
                         <field name="sprint_ematerai_ids" />
                     </page>
                 </xpath>
