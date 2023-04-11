@@ -26,6 +26,7 @@
                         widget="binary"
                         filename="ematerai_datas_fname"
                     />
+                <field name="err_msg" readonly="1" />
                 <field name="state" readonly="1" />
                 <button
                         name="action_generate_ematerai"

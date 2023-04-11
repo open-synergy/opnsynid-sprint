@@ -11,7 +11,6 @@ from datetime import datetime
 
 import requests
 from openerp import _, api, fields, models
-from openerp.exceptions import Warning as UserError
 
 
 class SprintEmaterai(models.Model):
@@ -89,10 +88,14 @@ class SprintEmaterai(models.Model):
         compute="_compute_get_reference",
         store=True,
     )
+    err_msg = fields.Char(
+        string="Error Message",
+    )
     state = fields.Selection(
         string="State",
         selection=[
             ("draft", "Draft"),
+            ("error", "Error"),
             ("success", "Success"),
         ],
         default="draft",
@@ -118,8 +121,8 @@ class SprintEmaterai(models.Model):
             "datas": data,
             "datas_fname": self.ref + ".pdf",
             "store_fname": filename,
-            "res_model": self._name,
-            "res_id": self.id,
+            "res_model": self.model,
+            "res_id": self.res_id,
         }
         attachment_id = obj_ir_attachment.create(ir_values)
         return attachment_id.id
@@ -134,21 +137,42 @@ class SprintEmaterai(models.Model):
         }
 
     @api.multi
+    def _set_error(self, msg_err):
+        self.ensure_one()
+        result = False
+        if msg_err:
+            self.write(
+                {
+                    "err_msg": msg_err,
+                    "state": "error",
+                }
+            )
+        else:
+            self.write(
+                {
+                    "err_msg": "",
+                    "state": "success",
+                }
+            )
+            result = True
+        return result
+
+    @api.multi
     def _get_token(self):
         self.ensure_one()
         company = self.env.user.company_id
         if not company.sp_ematerai_username:
             msg_err = _("Username Not Found")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
         if not company.sp_ematerai_password:
             msg_err = _("Password Not Found")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
         if not company.sp_ematerai_base_url:
             msg_err = _("Base URL Not Found")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
         if not company.sp_ematerai_api_token:
             msg_err = _("API Token Not Found")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
 
         url = company.sp_ematerai_base_url + company.sp_ematerai_api_token
         payload = json.dumps(
@@ -164,28 +188,27 @@ class SprintEmaterai(models.Model):
             response = requests.request("GET", url, headers=headers, data=payload)
         except requests.exceptions.Timeout:
             msg_err = _("Timeout: the server did not reply within 30s")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
         result = response.json()
         if result["statuscode"] == "00":
             company.sp_ematerai_token = result["token"]
+            msg_err = False
+            return self._set_error(msg_err)
         else:
             msg_err = _("%s") % (result["description"])
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
 
     @api.multi
     def _download_doc(self):
         self.ensure_one()
         company = self.env.user.company_id
         type = self.type_id
-        if not company.sp_ematerai_token:
-            msg_err = _("Token Not Found")
-            raise UserError(msg_err)
         if not company.sp_ematerai_base_url:
             msg_err = _("Base URL Not Found")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
         if not company.sp_ematerai_download:
             msg_err = _("API Download Doc. Not Found")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
 
         url = company.sp_ematerai_base_url + company.sp_ematerai_download
         headers = {
@@ -215,28 +238,37 @@ class SprintEmaterai(models.Model):
             response = requests.request("GET", url, headers=headers, data=payload)
         except requests.exceptions.Timeout:
             msg_err = _("Timeout: the server did not reply within 30s")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
+        except ValueError as e:
+            msg_err = _(
+                """
+            Response: %s
+            Error: %s
+            """
+                % (response.text, e)
+            )
+            return self._set_error(msg_err)
         finally:
             os.unlink(fname)
 
         if not response:
             msg_err = _("Can't retrieve response")
-            raise UserError(msg_err)
+            return self._set_error(msg_err)
 
         if response.status_code == 200:
             try:
                 result = response.json()
             except ValueError as e:
-                error_message = _(
+                msg_err = _(
                     """
                 Response: %s
                 Error: %s
                 """
                     % (response.text, e)
                 )
-                raise UserError(error_message)
+                return self._set_error(msg_err)
             if "file" not in result:
-                error_message = _(
+                msg_err = _(
                     """
                 Message: %s
                 Description: %s
@@ -244,19 +276,21 @@ class SprintEmaterai(models.Model):
                 """
                     % (result["message"], result["description"], result["statuscode"])
                 )
-                raise UserError(error_message)
+                return self._set_error(msg_err)
             self.write(self._prepare_download_document_data(result["file"]))
+            msg_err = False
+            return self._set_error(msg_err)
         else:
             resp_code = response.status_code
             resp_message = response.reason
-            error_message = _("%s - %s") % (resp_code, resp_message)
-            raise UserError(error_message)
+            msg_err = _("%s - %s") % (resp_code, resp_message)
+            return self._set_error(msg_err)
 
     @api.multi
     def _action_generate_ematerai(self):
         self.ensure_one()
-        self._get_token()
-        self._download_doc()
+        if self._get_token():
+            self._download_doc()
         return True
 
     @api.multi
