@@ -77,6 +77,14 @@
                                 />
                         <field name="sp_ematerai_download" class="oe_inline" />
                     </div>
+                    <div>
+                        <label
+                                    for="sp_timeout"
+                                    string="Timeout(seconds)"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_timeout" class="oe_inline" />
+                    </div>
                 </div>
             </group>
         </form>

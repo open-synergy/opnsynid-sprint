@@ -19,6 +19,10 @@ class SprintEmateraiSettings(models.TransientModel):
         required=True,
         default=lambda self: self._default_company_id(),
     )
+    sp_timeout = fields.Float(
+        string="Timeout",
+        related="company_id.sp_timeout",
+    )
     sp_ematerai_username = fields.Char(
         string="Username",
         related="company_id.sp_ematerai_username",

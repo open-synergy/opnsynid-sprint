@@ -8,6 +8,10 @@ class ResCompany(models.Model):
     _inherit = "res.company"
     _name = "res.company"
 
+    sp_timeout = fields.Float(
+        string="Timeout",
+        default=30.0,
+    )
     sp_ematerai_username = fields.Char(
         string="Username",
     )

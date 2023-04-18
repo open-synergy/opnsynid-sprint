@@ -11,6 +11,7 @@ from datetime import datetime
 
 import requests
 from openerp import _, api, fields, models
+from openerp.exceptions import Warning as UserError
 
 
 class SprintEmaterai(models.Model):
@@ -185,9 +186,14 @@ class SprintEmaterai(models.Model):
             "Content-Type": "application/json",
         }
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            timeout = company.sp_timeout or 30
+            response = requests.request(
+                "GET", url, headers=headers, data=payload, timeout=timeout
+            )
         except requests.exceptions.Timeout:
-            msg_err = _("Timeout: the server did not reply within 30s")
+            msg_err = _("Timeout: the server did not reply within %.2f seconds") % (
+                timeout
+            )
             return self._set_error(msg_err)
         result = response.json()
         if result["statuscode"] == "00":
@@ -235,9 +241,14 @@ class SprintEmaterai(models.Model):
         )
 
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            timeout = company.sp_timeout or 30
+            response = requests.request(
+                "GET", url, headers=headers, data=payload, timeout=timeout
+            )
         except requests.exceptions.Timeout:
-            msg_err = _("Timeout: the server did not reply within 30s")
+            msg_err = _("Timeout: the server did not reply within %.2f seconds") % (
+                timeout
+            )
             return self._set_error(msg_err)
         except ValueError as e:
             msg_err = _(
@@ -297,3 +308,13 @@ class SprintEmaterai(models.Model):
     def action_generate_ematerai(self):
         for document in self:
             document._action_generate_ematerai()
+
+    @api.multi
+    def unlink(self):
+        strWarning = _("You can only delete E-Materai data on draft state")
+        for document in self:
+            if document.state != "draft":
+                if not self.env.context.get("force_unlink", False):
+                    raise UserError(strWarning)
+        _super = super(SprintEmaterai, self)
+        _super.unlink()
