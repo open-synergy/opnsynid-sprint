@@ -44,6 +44,10 @@ class SprintEmateraiSettings(models.TransientModel):
         related="company_id.sp_ematerai_api_token",
     )
     sp_ematerai_download = fields.Char(
-        string="API Download Doc.",
+        string="API E-Materai Single",
         related="company_id.sp_ematerai_download",
+    )
+    sp_ematerai_batch = fields.Char(
+        string="API E-Materai Batch",
+        related="company_id.sp_ematerai_batch",
     )

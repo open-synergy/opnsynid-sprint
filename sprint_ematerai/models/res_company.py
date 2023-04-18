@@ -28,5 +28,8 @@ class ResCompany(models.Model):
         string="API Token",
     )
     sp_ematerai_download = fields.Char(
-        string="API Download Doc.",
+        string="API E-Materai Single",
+    )
+    sp_ematerai_batch = fields.Char(
+        string="API E-Materai Batch",
     )
