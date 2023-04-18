@@ -72,7 +72,7 @@
                     <div>
                         <label
                                     for="sp_ematerai_download"
-                                    string="API Download Doc."
+                                    string="API E-Materai Single"
                                     class="oe_inline"
                                 />
                         <field name="sp_ematerai_download" class="oe_inline" />

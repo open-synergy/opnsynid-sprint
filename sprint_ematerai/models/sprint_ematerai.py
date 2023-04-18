@@ -90,7 +90,7 @@ class SprintEmaterai(models.Model):
         store=True,
     )
     err_msg = fields.Char(
-        string="Error Message",
+        string="Response",
     )
     state = fields.Selection(
         string="State",
@@ -213,7 +213,7 @@ class SprintEmaterai(models.Model):
             msg_err = _("Base URL Not Found")
             return self._set_error(msg_err)
         if not company.sp_ematerai_download:
-            msg_err = _("API Download Doc. Not Found")
+            msg_err = _("API E-Materai Single Not Found")
             return self._set_error(msg_err)
 
         url = company.sp_ematerai_base_url + company.sp_ematerai_download

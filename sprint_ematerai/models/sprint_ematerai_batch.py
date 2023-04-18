@@ -4,10 +4,13 @@
 # pylint: disable=W0622,W0101
 
 import base64
+import json
+import os
+import tempfile
 from datetime import datetime
 
+import requests
 from openerp import _, api, fields, models
-from openerp.exceptions import Warning as UserError
 
 
 class SprintEmateraiBatch(models.AbstractModel):
@@ -97,19 +100,144 @@ class SprintEmateraiBatch(models.AbstractModel):
         string="Note",
         copy=True,
     )
+    response_msg = fields.Text(
+        string="Response",
+        copy=True,
+    )
 
     @api.multi
     def action_generate(self):
         for document in self:
-            document.write(document._prepare_generate_data())
+            data = document._prepare_generate_data()
+            if document._get_token():
+                document._generate_ematerai(data)
 
     @api.multi
     def _prepare_generate_data(self):
         self.ensure_one()
-        raise UserError(_("%s") % ("This feature is currently under construction"))
-        return {
-            "state": "generate",
+        res = []
+        for ematerai in self.ematerai_ids:
+            data = base64.decodestring(ematerai.original_attachment_data)
+
+            fobj = tempfile.NamedTemporaryFile(delete=False)
+            fname = fobj.name
+            fobj.write(data)
+            fobj.close()
+
+            with open(fname, "rb") as fp:
+                contents = fp.read()
+                filename = base64.encodestring(contents)
+                fp.seek(0)
+
+            value = {
+                "name": ematerai.ref,
+                "keyword": ematerai.type_id.keyword,
+                "file": filename,
+            }
+            os.unlink(fname)
+            res.append(value)
+        return res
+
+    @api.multi
+    def _set_response(self, response_msg):
+        self.ensure_one()
+        result = False
+        if response_msg:
+            self.write(
+                {
+                    "response_msg": response_msg,
+                }
+            )
+        else:
+            self.write(
+                {
+                    "response_msg": "",
+                }
+            )
+            result = True
+        return result
+
+    @api.multi
+    def _get_token(self):
+        self.ensure_one()
+        company = self.env.user.company_id
+        if not company.sp_ematerai_username:
+            msg_err = _("Username Not Found")
+            return self._set_response(msg_err)
+        if not company.sp_ematerai_password:
+            msg_err = _("Password Not Found")
+            return self._set_response(msg_err)
+        if not company.sp_ematerai_base_url:
+            msg_err = _("Base URL Not Found")
+            return self._set_response(msg_err)
+        if not company.sp_ematerai_api_token:
+            msg_err = _("API Token Not Found")
+            return self._set_response(msg_err)
+
+        url = company.sp_ematerai_base_url + company.sp_ematerai_api_token
+        payload = json.dumps(
+            {
+                "username": company.sp_ematerai_username,
+                "password": company.sp_ematerai_password,
+            }
+        )
+        headers = {
+            "Content-Type": "application/json",
         }
+        try:
+            response = requests.request("GET", url, headers=headers, data=payload)
+        except requests.exceptions.Timeout:
+            msg_err = _("Timeout: the server did not reply within 30s")
+            return self._set_response(msg_err)
+        result = response.json()
+        if result["statuscode"] == "00":
+            company.sp_ematerai_token = result["token"]
+            msg_err = False
+            return self._set_response(msg_err)
+        else:
+            msg_err = _("%s") % (result["description"])
+            return self._set_response(msg_err)
+
+    @api.multi
+    def _generate_ematerai(self, data):
+        self.ensure_one()
+        if not data:
+            msg_err = _("Data E-Materai(s) Not Found")
+            return self._set_response(msg_err)
+        company = self.env.user.company_id
+        if not company.sp_ematerai_base_url:
+            msg_err = _("Base URL Not Found")
+            return self._set_response(msg_err)
+        if not company.sp_ematerai_batch:
+            msg_err = _("API E-Materai Batch Not Found")
+            return self._set_response(msg_err)
+
+        url = company.sp_ematerai_base_url + company.sp_ematerai_batch
+        headers = {
+            "Authorization": "Bearer " + company.sp_ematerai_token,
+        }
+        payload = json.dumps({"document": data})
+        # return self._set_response(payload)
+        try:
+            response = requests.request("GET", url, headers=headers, data=payload)
+        except requests.exceptions.Timeout:
+            msg_err = _("Timeout: the server did not reply within 30s")
+            return self._set_response(msg_err)
+        except ValueError as e:
+            msg_err = _(
+                """
+            Response: %s
+            Error: %s
+            """
+                % (response.text, e)
+            )
+            return self._set_response(msg_err)
+
+        if not response:
+            msg_err = _("Can't retrieve response")
+            return self._set_response(msg_err)
+
+        return self._set_response(response.text)
 
     @api.multi
     def action_confirm(self):
@@ -154,9 +282,6 @@ class SprintEmateraiBatch(models.AbstractModel):
     @api.multi
     def _prepare_attachment_data(self, report_id, object):
         self.ensure_one()
-        # active_ids = self.env[object._name].browse(object.id)
-        # x = self.env.context.get("active_ids", False)
-        # raise UserError(_("%s")%([object.id]))
         object_ids = [object.id]
         obj_report = self.env["ir.actions.report.xml"]
         ctx = {"active_model": self.type_id.model}

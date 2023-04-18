@@ -42,10 +42,7 @@
                 <data>
                     <xpath expr="//page[@name='page_ematerai']" position='before'>
                         <page name="page_invoice" string="Invoice(s)">
-                            <group name="grp_invoice" colspan="4" col="2">
-                                <field name="invoice_ids" nolabel="1">
-                                </field>
-                            </group>
+                            <field name="invoice_ids" nolabel="1" />
                         </page>
                     </xpath>
                 </data>
