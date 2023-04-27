@@ -79,6 +79,14 @@
                     </div>
                     <div>
                         <label
+                                    for="sp_ematerai_batch"
+                                    string="API E-Materai Batch"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_batch" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
                                     for="sp_timeout"
                                     string="Timeout(seconds)"
                                     class="oe_inline"
