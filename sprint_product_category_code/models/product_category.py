@@ -1,7 +1,7 @@
 # Copyright 2023 OpenSynergy Indonesia
 # Copyright 2023 PT. Simetri Sinergi Indonesia
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
-from openerp import _, api, fields, models
+from openerp import api, fields, models
 
 
 class ProductCategory(models.Model):
@@ -10,14 +10,6 @@ class ProductCategory(models.Model):
     code = fields.Char(
         string="Code",
     )
-
-    _sql_constraints = [
-        (
-            "product_category_unique_code",
-            "UNIQUE (code)",
-            _("The code must be unique!"),
-        ),
-    ]
 
     @api.model
     def name_search(self, name="", args=None, operator="ilike", limit=100):
