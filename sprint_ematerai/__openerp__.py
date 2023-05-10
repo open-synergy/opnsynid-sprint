@@ -12,6 +12,7 @@
         "base",
         "mail",
         "base_sequence_configurator",
+        "base_action_rule",
     ],
     "data": [
         "security/ir.model.access.csv",
