@@ -60,3 +60,11 @@ class MixinSprintEmaterai(models.AbstractModel):
         comodel_name="ir.attachment",
         compute="_compute_last_ematerai_info",
     )
+
+    @api.multi
+    def unlink(self):
+        sprint_ematerai_ids = self.mapped("sprint_ematerai_ids")
+        res = super(MixinSprintEmaterai, self).unlink()
+        if res:
+            sprint_ematerai_ids.unlink()
+        return res
