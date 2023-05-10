@@ -9,8 +9,6 @@
         <field name="model">sprint.ematerai</field>
         <field name="arch" type="xml">
             <tree string="E-Materai Document" editable="bottom">
-                <field name="type_id" readonly="1" />
-                <field name="ref" />
                 <field name="date" readonly="1" />
                 <field name="original_attachment_id" invisible="1" />
                 <field name="original_datas_fname" invisible="1" />
@@ -27,6 +25,7 @@
                         filename="ematerai_datas_fname"
                     />
                 <field name="err_msg" readonly="1" />
+                <field name="ref_batch" readonly="1" />
                 <field name="state" readonly="1" />
                 <button
                         name="action_generate_ematerai"

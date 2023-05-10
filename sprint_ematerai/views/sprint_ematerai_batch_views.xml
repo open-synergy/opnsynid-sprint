@@ -103,14 +103,13 @@
                             confirm="Confirm batch. Are you sure?"
                         />
                         <button
-                            name="action_generate"
+                            name="action_generate_ematerai"
                             type="object"
                             string="Generate"
                             class="oe_highlight"
                             attrs="{'invisible':[('state','!=','confirm')]}"
                             confirm="Generate E-Materai. Are you sure?"
                         />
-
                         <field
                             name="state"
                             widget="statusbar"
@@ -148,7 +147,49 @@
                         </group>
                         <notebook>
                             <page name="page_ematerai" string="E-Materai(s)">
-                                <field name="ematerai_ids" colspan="4" nolabel="1" />
+                                <field name="all_success" invisible="1" />
+                                <field name="ematerai_ids" colspan="4" nolabel="1">
+                                    <tree>
+                                        <field name="date" readonly="1" />
+                                        <field name="ref" readonly="1" />
+                                        <field
+                                            name="original_attachment_id"
+                                            invisible="1"
+                                        />
+                                        <field
+                                            name="original_datas_fname"
+                                            invisible="1"
+                                        />
+                                        <field
+                                            name="original_attachment_data"
+                                            widget="binary"
+                                            filename="original_datas_fname"
+                                        />
+                                        <field
+                                            name="ematerai_attachment_id"
+                                            invisible="1"
+                                        />
+                                        <field
+                                            name="ematerai_datas_fname"
+                                            invisible="1"
+                                        />
+                                        <field
+                                            name="ematerai_attachment_data"
+                                            widget="binary"
+                                            filename="ematerai_datas_fname"
+                                        />
+                                        <field name="err_msg" readonly="1" />
+                                        <field name="state" readonly="1" />
+                                        <button
+                                            name="action_generate_ematerai"
+                                            string="Generate E-Materai"
+                                            type="object"
+                                            icon="gtk-apply"
+                                            confirm="Generate E-Materai. Are you sure?"
+                                            attrs="{'invisible':[('state','=', 'success')]}"
+                                        />
+                                    </tree>
+                                </field>
                             </page>
                             <page name="response" string="Response">
                                 <field name="response_msg" colspan="4" nolabel="1" />

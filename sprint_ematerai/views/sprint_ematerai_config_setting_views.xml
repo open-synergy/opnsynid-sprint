@@ -24,7 +24,18 @@
             <field name="company_id" invisible="1" />
             <separator string="E-Materai" />
             <group name="sprint_ematerai_config">
-                <label for="id" string="General" />
+                <label for="id" string="GENERAL" />
+                <div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_base_url"
+                                    string="Base URL"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_base_url" class="oe_inline" />
+                    </div>
+                </div>
+                <label for="id" string="SINGLE" />
                 <div>
                     <div>
                         <label
@@ -52,17 +63,6 @@
                     </div>
                     <div>
                         <label
-                                    for="sp_ematerai_base_url"
-                                    string="Base URL"
-                                    class="oe_inline"
-                                />
-                        <field name="sp_ematerai_base_url" class="oe_inline" />
-                    </div>
-                </div>
-                <label for="id" string="API" />
-                <div>
-                    <div>
-                        <label
                                     for="sp_ematerai_api_token"
                                     string="API Token"
                                     class="oe_inline"
@@ -72,18 +72,10 @@
                     <div>
                         <label
                                     for="sp_ematerai_download"
-                                    string="API E-Materai Single"
+                                    string="API E-Materai"
                                     class="oe_inline"
                                 />
                         <field name="sp_ematerai_download" class="oe_inline" />
-                    </div>
-                    <div>
-                        <label
-                                    for="sp_ematerai_batch"
-                                    string="API E-Materai Batch"
-                                    class="oe_inline"
-                                />
-                        <field name="sp_ematerai_batch" class="oe_inline" />
                     </div>
                     <div>
                         <label
@@ -92,6 +84,53 @@
                                     class="oe_inline"
                                 />
                         <field name="sp_timeout" class="oe_inline" />
+                    </div>
+                </div>
+                <label for="id" string="BATCH" />
+                <div>
+                    <div>
+                        <label
+                                    for="sp_batch_username"
+                                    string="Username"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_batch_username" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_batch_password"
+                                    string="Password"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_batch_password" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label for="sp_batch_token" string="Token" class="oe_inline" />
+                        <field name="sp_batch_token" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_batch_api_token"
+                                    string="API Token"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_batch_api_token" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_ematerai_batch"
+                                    string="API E-Materai"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_ematerai_batch" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="sp_batch_timeout"
+                                    string="Timeout(seconds)"
+                                    class="oe_inline"
+                                />
+                        <field name="sp_batch_timeout" class="oe_inline" />
                     </div>
                 </div>
             </group>
