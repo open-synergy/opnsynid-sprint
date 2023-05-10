@@ -83,13 +83,16 @@ class SprintEmateraiBatch(models.AbstractModel):
     ematerai_ids = fields.One2many(
         string="Ematerai(s)",
         comodel_name="sprint.ematerai",
-        inverse_name="batch_id",
+        inverse_name="batch_res_id",
+        domain=lambda self: [("model_batch", "=", self._name)],
+        auto_join=True,
         readonly=True,
     )
     state = fields.Selection(
         string="State",
         selection=[
             ("draft", "Draft"),
+            ("cancel", "Cancel"),
             ("confirm", "Waiting for generated"),
             ("generate", "Generated"),
         ],
@@ -106,7 +109,43 @@ class SprintEmateraiBatch(models.AbstractModel):
     )
 
     @api.multi
-    def action_generate(self):
+    @api.depends(
+        "ematerai_ids",
+        "ematerai_ids.state",
+    )
+    def _compute_all_success(self):
+        for document in self:
+            result = False
+            if document.ematerai_ids:
+                ematerai_check = document.ematerai_ids.filtered(
+                    lambda x: x.state != "success"
+                )
+                if len(ematerai_check) > 0:
+                    result = False
+                else:
+                    result = True
+                    document.action_generate_batch()
+            document.all_success = result
+
+    all_success = fields.Boolean(
+        string="All E-Materai Generated",
+        compute="_compute_all_success",
+    )
+
+    @api.multi
+    def _prepare_generate_batch_data(self):
+        self.ensure_one()
+        return {
+            "state": "generate",
+        }
+
+    @api.multi
+    def action_generate_batch(self):
+        for document in self:
+            document.write(document._prepare_generate_batch_data())
+
+    @api.multi
+    def action_generate_ematerai(self):
         for document in self:
             data = document._prepare_generate_data()
             if document._get_token():
@@ -116,7 +155,7 @@ class SprintEmateraiBatch(models.AbstractModel):
     def _prepare_generate_data(self):
         self.ensure_one()
         res = []
-        for ematerai in self.ematerai_ids:
+        for ematerai in self.ematerai_ids.filtered(lambda x: x.state != "success"):
             data = base64.decodestring(ematerai.original_attachment_data)
 
             fobj = tempfile.NamedTemporaryFile(delete=False)
@@ -161,37 +200,42 @@ class SprintEmateraiBatch(models.AbstractModel):
     def _get_token(self):
         self.ensure_one()
         company = self.env.user.company_id
-        if not company.sp_ematerai_username:
+        if not company.sp_batch_username:
             msg_err = _("Username Not Found")
             return self._set_response(msg_err)
-        if not company.sp_ematerai_password:
+        if not company.sp_batch_password:
             msg_err = _("Password Not Found")
             return self._set_response(msg_err)
         if not company.sp_ematerai_base_url:
             msg_err = _("Base URL Not Found")
             return self._set_response(msg_err)
-        if not company.sp_ematerai_api_token:
+        if not company.sp_batch_api_token:
             msg_err = _("API Token Not Found")
             return self._set_response(msg_err)
 
-        url = company.sp_ematerai_base_url + company.sp_ematerai_api_token
+        url = company.sp_ematerai_base_url + company.sp_batch_api_token
         payload = json.dumps(
             {
-                "username": company.sp_ematerai_username,
-                "password": company.sp_ematerai_password,
+                "username": company.sp_batch_username,
+                "password": company.sp_batch_password,
             }
         )
         headers = {
             "Content-Type": "application/json",
         }
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            timeout = company.sp_batch_timeout or 100
+            response = requests.request(
+                "GET", url, headers=headers, data=payload, timeout=timeout
+            )
         except requests.exceptions.Timeout:
-            msg_err = _("Timeout: the server did not reply within 30s")
+            msg_err = _("Timeout: the server did not reply within %.2f seconds") % (
+                timeout
+            )
             return self._set_response(msg_err)
         result = response.json()
         if result["statuscode"] == "00":
-            company.sp_ematerai_token = result["token"]
+            company.sp_batch_token = result["token"]
             msg_err = False
             return self._set_response(msg_err)
         else:
@@ -214,14 +258,19 @@ class SprintEmateraiBatch(models.AbstractModel):
 
         url = company.sp_ematerai_base_url + company.sp_ematerai_batch
         headers = {
-            "Authorization": "Bearer " + company.sp_ematerai_token,
+            "Authorization": "Bearer " + company.sp_batch_token,
         }
         payload = json.dumps({"document": data})
         # return self._set_response(payload)
         try:
-            response = requests.request("GET", url, headers=headers, data=payload)
+            timeout = company.sp_batch_timeout or 100
+            response = requests.request(
+                "GET", url, headers=headers, data=payload, timeout=timeout
+            )
         except requests.exceptions.Timeout:
-            msg_err = _("Timeout: the server did not reply within 30s")
+            msg_err = _("Timeout: the server did not reply within %.2f seconds") % (
+                timeout
+            )
             return self._set_response(msg_err)
         except ValueError as e:
             msg_err = _(
@@ -237,13 +286,47 @@ class SprintEmateraiBatch(models.AbstractModel):
             msg_err = _("Can't retrieve response")
             return self._set_response(msg_err)
 
-        return self._set_response(response.text)
+        return self._get_ematerai_data(response)
+
+    @api.multi
+    def _get_ematerai_data(self, response):
+        self.ensure_one()
+        try:
+            res = response.json()
+        except ValueError as e:
+            msg_err = _(
+                """
+            Response: %s
+            Error: %s
+            """
+                % (response.text, e)
+            )
+            return self._set_response(msg_err)
+        if "result" in res:
+            for data in res["result"]:
+                ematerai = self.ematerai_ids.filtered(lambda x: x.ref == data["name"])
+                if data["statuscode"] == "00":
+                    ematerai.write(
+                        ematerai._prepare_download_document_data(data["file"])
+                    )
+                    msg_err = False
+                    ematerai._set_error(msg_err)
+                else:
+                    msg_err = _(
+                        """
+                    Message: %s
+                    Description: %s
+                    Status Code: %s
+                    """
+                        % (data["message"], data["description"], data["statuscode"])
+                    )
+                    ematerai._set_error(msg_err)
 
     @api.multi
     def action_confirm(self):
         for document in self:
-            document.action_create_ematerai()
             document.write(document._prepare_confirm_data())
+            document.action_create_ematerai()
 
     @api.multi
     def _prepare_confirm_data(self):
@@ -276,7 +359,8 @@ class SprintEmateraiBatch(models.AbstractModel):
             "res_id": active_id,
             "type_id": self.type_id.id,
             "original_attachment_id": original_attachment_id.id,
-            "batch_id": self.id,
+            "model_batch": self._name,
+            "batch_res_id": self.id,
         }
 
     @api.multi

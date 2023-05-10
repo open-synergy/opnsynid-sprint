@@ -19,6 +19,12 @@ class SprintEmateraiSettings(models.TransientModel):
         required=True,
         default=lambda self: self._default_company_id(),
     )
+    # GENERAL
+    sp_ematerai_base_url = fields.Char(
+        string="Base URL",
+        related="company_id.sp_ematerai_base_url",
+    )
+    # SINGLE
     sp_timeout = fields.Float(
         string="Timeout",
         related="company_id.sp_timeout",
@@ -35,10 +41,6 @@ class SprintEmateraiSettings(models.TransientModel):
         string="Token",
         related="company_id.sp_ematerai_token",
     )
-    sp_ematerai_base_url = fields.Char(
-        string="Base URL",
-        related="company_id.sp_ematerai_base_url",
-    )
     sp_ematerai_api_token = fields.Char(
         string="API Token",
         related="company_id.sp_ematerai_api_token",
@@ -46,6 +48,27 @@ class SprintEmateraiSettings(models.TransientModel):
     sp_ematerai_download = fields.Char(
         string="API E-Materai Single",
         related="company_id.sp_ematerai_download",
+    )
+    # BATCH
+    sp_batch_timeout = fields.Float(
+        string="Timeout",
+        related="company_id.sp_batch_timeout",
+    )
+    sp_batch_username = fields.Char(
+        string="Username",
+        related="company_id.sp_batch_username",
+    )
+    sp_batch_password = fields.Char(
+        string="Password",
+        related="company_id.sp_batch_password",
+    )
+    sp_batch_token = fields.Char(
+        string="Token",
+        related="company_id.sp_batch_token",
+    )
+    sp_batch_api_token = fields.Char(
+        string="API Token",
+        related="company_id.sp_batch_api_token",
     )
     sp_ematerai_batch = fields.Char(
         string="API E-Materai Batch",

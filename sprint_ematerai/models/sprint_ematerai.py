@@ -26,6 +26,14 @@ class SprintEmaterai(models.Model):
         string="Related Document ID",
         index=True,
     )
+    model_batch = fields.Char(
+        string="Batch Model",
+        index=True,
+    )
+    batch_res_id = fields.Integer(
+        string="Batch ID",
+        index=True,
+    )
     date = fields.Date(
         string="Date",
         default=fields.Date.context_today,
@@ -62,12 +70,6 @@ class SprintEmaterai(models.Model):
         string="Type",
         comodel_name="sprint.ematerai_type",
     )
-    batch_id = fields.Many2one(
-        string="Batch ID",
-        comodel_name="sprint.ematerai_batch",
-        ondelete="restrict",
-        readonly=True,
-    )
 
     @api.multi
     @api.depends(
@@ -87,6 +89,23 @@ class SprintEmaterai(models.Model):
     ref = fields.Char(
         string="Reference",
         compute="_compute_get_reference",
+        store=True,
+    )
+
+    @api.multi
+    @api.depends(
+        "model_batch",
+        "batch_res_id",
+    )
+    def _compute_get_batch_ref(self):
+        for record in self:
+            obj = self.env[record.model_batch]
+            obj_id = obj.browse(record.batch_res_id)
+            record.ref_batch = obj_id.name
+
+    ref_batch = fields.Char(
+        string="# Batch",
+        compute="_compute_get_batch_ref",
         store=True,
     )
     err_msg = fields.Char(
