@@ -2,6 +2,8 @@
 # Copyright 2022 PT. Simetri Sinergi Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import re
+
 from openerp import api, models
 
 
@@ -15,7 +17,7 @@ class ResPartner(models.Model):
         vat = self.env["res.partner"]._split_vat(self.commercial_partner_id.vat)[1]
         return {
             "name": self.commercial_partner_id.legal_name,
-            "npwp": vat,
+            "npwp": self._convert_vat(vat),
             "address": self._klikpajak_get_alamat(),
         }
 
@@ -28,3 +30,9 @@ class ResPartner(models.Model):
         zip = self.zip or ""
         alamat = street + ". " + street2 + ". " + city + ". " + zip
         return alamat
+
+    @api.multi
+    def _convert_vat(self, vat):
+        self.ensure_one()
+        result = re.sub("[.-]", "", vat)
+        return result
