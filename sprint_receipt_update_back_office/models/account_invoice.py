@@ -27,7 +27,7 @@ class AccountInvoice(models.Model):
     def _get_pph_23_amount(self):
         self.ensure_one()
         result = 0.0
-        accounts = self.company_id.sp_pph_23_account_ids
+        accounts = self.company_id.pph_23_account_ids
         for payment in self.payment_ids:
             for line in payment.move_id.line_id:
                 if line.account_id.id in accounts.ids:
