@@ -24,6 +24,17 @@ class AccountInvoice(models.Model):
     )
 
     @api.multi
+    def _get_pph_23_amount(self):
+        self.ensure_one()
+        result = 0.0
+        accounts = self.company_id.sp_pph_23_account_ids
+        for payment in self.payment_ids:
+            for line in payment.move_id.line_id:
+                if line.account_id.id in accounts.ids:
+                    result += line.debit
+        return result
+
+    @api.multi
     def _prepare_update_payment_data(self):
         self.ensure_one()
         return {
@@ -31,7 +42,7 @@ class AccountInvoice(models.Model):
             "no_invoice": self.internal_number,
             "total": self.amount_total,
             "payment": (self.amount_total - self.residual),
-            "pph23": 0.0,
+            "pph23": self._get_pph_23_amount(),
             "pay_date": self.last_payment_date,
             "note": self.comment,
             "selisih": self.residual,
@@ -45,7 +56,7 @@ class AccountInvoice(models.Model):
             "no_invoice": self.internal_number,
             "total": self.amount_total,
             "payment": (self.amount_total - self.residual),
-            "pph23": 0.0,
+            "pph23": self._get_pph_23_amount(),
             "pay_date": self.last_payment_date,
             "note": self.comment,
             "selisih": self.residual,

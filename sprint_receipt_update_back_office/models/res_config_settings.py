@@ -16,3 +16,7 @@ class SprintBackOfficeSettings(models.TransientModel):
         string="Cancel Payment",
         related="company_id.sp_cancel_payment",
     )
+    sp_pph_23_account_ids = fields.Many2many(
+        string="PPh 23 Accounts",
+        related="company_id.pph_23_account_ids",
+    )

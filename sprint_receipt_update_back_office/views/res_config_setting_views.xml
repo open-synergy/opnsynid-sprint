@@ -30,6 +30,18 @@
                         />
                 <field name="sp_cancel_payment" class="oe_inline" />
             </div>
+            <div>
+                <label
+                            for="sp_pph_23_account_ids"
+                            string="PPh 23 Accounts"
+                            class="oe_inline"
+                        />
+                <field
+                            name="sp_pph_23_account_ids"
+                            class="oe_inline"
+                            widget="many2many_tags"
+                        />
+            </div>
         </xpath>
     </field>
 </record>

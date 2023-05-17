@@ -13,3 +13,10 @@ class ResCompany(models.Model):
     sp_cancel_payment = fields.Char(
         string="Cancel Payment",
     )
+    pph_23_account_ids = fields.Many2many(
+        string="PPh 23 Accounts",
+        comodel_name="account.account",
+        relation="rel_company_2_pph_23_account",
+        column1="company_id",
+        column2="account_id",
+    )
