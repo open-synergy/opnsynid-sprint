@@ -99,9 +99,12 @@ class SprintEmaterai(models.Model):
     )
     def _compute_get_batch_ref(self):
         for record in self:
-            obj = self.env[record.model_batch]
-            obj_id = obj.browse(record.batch_res_id)
-            record.ref_batch = obj_id.name
+            result = ""
+            if record.model_batch:
+                obj = self.env[record.model_batch]
+                obj_id = obj.browse(record.batch_res_id)
+                record.ref_batch = obj_id.name
+            record.ref_batch = result
 
     ref_batch = fields.Char(
         string="# Batch",
