@@ -9,6 +9,7 @@ class AccountInvoiceEmateraiBatch(models.Model):
     _inherit = [
         "sprint.ematerai_batch",
     ]
+    _description = "Sprint Invoice E-Materai Batch"
     _field_record = "invoice_ids"
 
     invoice_ids = fields.Many2many(
@@ -20,7 +21,8 @@ class AccountInvoiceEmateraiBatch(models.Model):
         ondelete="restrict",
         required=True,
         readonly=True,
-        domain="[('state', 'in', ['open','proforma','proforma2'])]",
+        domain="[('state', 'in', ['open','proforma','proforma2']), "
+        "('type', '=', 'out_invoice')]",
         states={
             "draft": [("readonly", False)],
         },
