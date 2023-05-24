@@ -4,7 +4,7 @@
 
 {
     "name": "Sprint E-Materai Integration",
-    "version": "8.0.2.6.0",
+    "version": "8.0.2.7.0",
     "license": "AGPL-3",
     "website": "https://simetri-sinergi.id",
     "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",
@@ -17,9 +17,6 @@
     "data": [
         "security/ir.model.access.csv",
         "menu.xml",
-        "data/ir_filter_data.xml",
-        "data/ir_actions_server_data.xml",
-        "data/base_action_rule_data.xml",
         "views/sprint_ematerai_type_views.xml",
         "views/sprint_ematerai_config_setting_views.xml",
         "views/sprint_ematerai_views.xml",

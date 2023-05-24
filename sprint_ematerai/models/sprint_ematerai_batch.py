@@ -118,13 +118,12 @@ class SprintEmateraiBatch(models.AbstractModel):
             result = False
             if document.ematerai_ids:
                 ematerai_check = document.ematerai_ids.filtered(
-                    lambda x: x.state != "success"
+                    lambda x: x.state == "draft"
                 )
                 if len(ematerai_check) > 0:
                     result = False
                 else:
                     result = True
-                    document.action_generate_batch()
             document.all_success = result
 
     all_success = fields.Boolean(
@@ -140,9 +139,36 @@ class SprintEmateraiBatch(models.AbstractModel):
         }
 
     @api.multi
+    def _prepare_cancel_data(self):
+        self.ensure_one()
+        return {
+            "state": "cancel",
+        }
+
+    @api.multi
+    def _prepare_restart_data(self):
+        self.ensure_one()
+        return {
+            "state": "draft",
+        }
+
+    @api.multi
     def action_generate_batch(self):
         for document in self:
             document.write(document._prepare_generate_batch_data())
+
+    @api.multi
+    def action_cancel(self):
+        for document in self:
+            ematerai_ids = document.ematerai_ids.filtered(lambda x: x.state == "draft")
+            if ematerai_ids:
+                ematerai_ids.unlink()
+            document.write(document._prepare_cancel_data())
+
+    @api.multi
+    def action_restart(self):
+        for document in self:
+            document.write(document._prepare_restart_data())
 
     @api.multi
     def action_generate_ematerai(self):
@@ -349,19 +375,40 @@ class SprintEmateraiBatch(models.AbstractModel):
             record._action_create_ematerai()
 
     @api.multi
+    def _check_ematerai_data(self, model_name, res_id, model_batch, batch_res_id):
+        result = False
+        obj_ematerai_document = self.env["sprint.ematerai"]
+        criteria = [
+            ("model", "=", model_name),
+            ("res_id", "=", res_id),
+            ("model_batch", "=", model_batch),
+            ("batch_res_id", "=", batch_res_id),
+        ]
+        ematerai_ids = obj_ematerai_document.search(criteria)
+        if len(ematerai_ids) > 0:
+            result = True
+        return result
+
+    @api.multi
     def _prepare_ematerai_data(self, object):
         self.ensure_one()
         model_name = object._name
         active_id = object.id
-        original_attachment_id = self._get_report_attachment(object)
-        return {
-            "model": model_name,
-            "res_id": active_id,
-            "type_id": self.type_id.id,
-            "original_attachment_id": original_attachment_id.id,
-            "model_batch": self._name,
-            "batch_res_id": self.id,
-        }
+        _check_ematerai = self._check_ematerai_data(
+            model_name, active_id, self._name, self.id
+        )
+        if not _check_ematerai:
+            original_attachment_id = self._get_report_attachment(object)
+            return {
+                "model": model_name,
+                "res_id": active_id,
+                "type_id": self.type_id.id,
+                "original_attachment_id": original_attachment_id.id,
+                "model_batch": self._name,
+                "batch_res_id": self.id,
+            }
+        else:
+            return False
 
     @api.multi
     def _prepare_attachment_data(self, report_id, object):

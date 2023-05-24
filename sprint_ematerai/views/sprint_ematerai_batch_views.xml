@@ -107,13 +107,35 @@
                             type="object"
                             string="Generate"
                             class="oe_highlight"
-                            attrs="{'invisible':[('state','!=','confirm')]}"
+                            attrs="{'invisible':['|',('state','!=','confirm'),('all_success','=', True)]}"
                             confirm="Generate E-Materai. Are you sure?"
+                        />
+                        <button
+                            name="action_generate_batch"
+                            type="object"
+                            string="Finish"
+                            class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','confirm'),('all_success','!=', True)]}"
+                            confirm="Finish E-Materai. Are you sure?"
+                        />
+                        <button
+                            name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            attrs="{'invisible':[('state','not in', ['draft', 'confirm'])]}"
+                            confirm="Cancel batch. Are you sure?"
+                        />
+                        <button
+                            name="action_restart"
+                            type="object"
+                            string="Restart"
+                            attrs="{'invisible':[('state','&lt;&gt;', 'cancel')]}"
+                            confirm="Restart batch. Are you sure?"
                         />
                         <field
                             name="state"
                             widget="statusbar"
-                            statusbar_visible="draft,confirm,generate"
+                            statusbar_visible="draft,confirm,generate,cancel"
                         />
                     </header>
                     <sheet>
@@ -147,7 +169,9 @@
                         </group>
                         <notebook>
                             <page name="page_ematerai" string="E-Materai(s)">
-                                <field name="all_success" invisible="1" />
+                                <group name="grp_1">
+                                    <field name="all_success" />
+                                </group>
                                 <field name="ematerai_ids" colspan="4" nolabel="1">
                                     <tree>
                                         <field name="date" readonly="1" />
