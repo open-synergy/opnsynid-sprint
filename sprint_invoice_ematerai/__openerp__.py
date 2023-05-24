@@ -4,7 +4,7 @@
 
 {
     "name": "Account Invoice E-Materai",
-    "version": "8.0.2.1.1",
+    "version": "8.0.2.3.0",
     "license": "LGPL-3",
     "category": "Invoicing",
     "website": "https://simetri-sinergi.id",
