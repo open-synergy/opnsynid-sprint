@@ -85,14 +85,18 @@ class AccountInvoice(models.Model):
         }
 
     @api.multi
-    def _update_payment(self, src):
+    def _update_payment(self, src, **kwargs):
         self.ensure_one()
         response = None
+        headers = {}
         obj_history = self.env["account.invoice_update_payment_history"]
         base_url = self.company_id.sp_backoffice_url
         url = base_url + self.company_id.sp_update_payment
         params = self._prepare_update_payment_data()
-        headers = {}
+        if kwargs:
+            for key, value in kwargs.items():
+                if key in params:
+                    params[key] = value
 
         try:
             response = requests.request("POST", url, headers=headers, params=params)
@@ -122,14 +126,18 @@ class AccountInvoice(models.Model):
         )
 
     @api.multi
-    def _cancel_payment(self, src):
+    def _cancel_payment(self, src, **kwargs):
         self.ensure_one()
         response = None
+        headers = {}
         obj_history = self.env["account.invoice_cancel_payment_history"]
         base_url = self.company_id.sp_backoffice_url
         url = base_url + self.company_id.sp_cancel_payment
         params = self._prepare_cancel_payment_data()
-        headers = {}
+        if kwargs:
+            for key, value in kwargs.items():
+                if key in params:
+                    params[key] = value
 
         try:
             response = requests.request("POST", url, headers=headers, params=params)
