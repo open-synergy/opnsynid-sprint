@@ -108,7 +108,10 @@ class AccountInvoice(models.Model):
     def _get_klikpajak_amount_untaxed(self):
         self.ensure_one()
         result = self.amount_untaxed
-        for line in self.invoice_line.filtered(lambda r: not r.invoice_line_tax_id):
+        exclude_product_ids = self.company_id.klik_pajak_exclude_product_ids.ids
+        for line in self.invoice_line.filtered(
+            lambda r: r.product_id.id in exclude_product_ids
+        ):
             result -= line.price_subtotal
 
         return result

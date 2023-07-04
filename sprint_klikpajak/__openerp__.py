@@ -4,7 +4,7 @@
 
 {
     "name": "Sprint Klik Pajak Integration",
-    "version": "8.0.1.1.3",
+    "version": "8.0.1.1.4",
     "license": "AGPL-3",
     "website": "https://simetri-sinergi.id",
     "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",
