@@ -53,10 +53,21 @@
                     <div>
                         <label
                                     for="klikpajak_sale_invoice_url"
-                                    string="Sale Invoice URL"
+                                    string="Create Sale Invoice URL"
                                     class="oe_inline"
                                 />
                         <field name="klikpajak_sale_invoice_url" class="oe_inline" />
+                    </div>
+                    <div>
+                        <label
+                                    for="klikpajak_cancel_sale_invoice_url"
+                                    string="Cancel Sale Invoice URL"
+                                    class="oe_inline"
+                                />
+                        <field
+                                    name="klikpajak_cancel_sale_invoice_url"
+                                    class="oe_inline"
+                                />
                     </div>
                     <div>
                         <label

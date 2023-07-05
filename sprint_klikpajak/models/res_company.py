@@ -24,7 +24,10 @@ class ResCompany(models.Model):
         string="Klikpajak Base URL",
     )
     klikpajak_sale_invoice_url = fields.Char(
-        string="Klikpajak Sale Invoice URL",
+        string="Klikpajak Create Sale Invoice URL",
+    )
+    klikpajak_cancel_sale_invoice_url = fields.Char(
+        string="Klikpajak Cancel Sale Invoice URL",
     )
     klik_pajak_exclude_product_ids = fields.Many2many(
         string="Klikpajak Exclude Product",

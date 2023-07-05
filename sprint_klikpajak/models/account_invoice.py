@@ -62,6 +62,77 @@ class AccountInvoice(models.Model):
         readonly=True,
         copy=False,
     )
+    klik_pajak_submit_ok = fields.Boolean(
+        string="Klikpajak Submit Ok",
+        compute="_compute_klikpajak_state",
+        store=False,
+    )
+    klik_pajak_approve_ok = fields.Boolean(
+        string="Klikpajak Approve Ok",
+        compute="_compute_klikpajak_state",
+        store=False,
+    )
+    klik_pajak_cancel_ok = fields.Boolean(
+        string="Klikpajak Cancel Ok",
+        compute="_compute_klikpajak_state",
+        store=False,
+    )
+    klik_pajak_resubmit_ok = fields.Boolean(
+        string="Klikpajak Resubmit Ok",
+        compute="_compute_klikpajak_state",
+        store=False,
+    )
+
+    @api.depends(
+        "klikpajak_id",
+        "klikpajak_invoice_status",
+        "klikpajak_approval_status",
+        "lock_taxform",
+    )
+    def _compute_klikpajak_state(self):
+        for record in self:
+            record.klik_pajak_submit_ok = (
+                record.klik_pajak_cancel_ok
+            ) = record.klik_pajak_resubmit_ok = False
+
+            if record.klikpajak_id == 0 and record.lock_taxform:
+                record.klik_pajak_submit_ok = True
+            elif (
+                record.klikpajak_invoice_status == "NORMAL"
+                or record.klikpajak_invoice_status == "NORMAL_SUB"
+            ) and record.klikpajak_approval_status == "APPROVED":
+                record.klik_pajak_cancel_ok = True
+                record.klik_pajak_resubmit_ok = True
+            elif (
+                record.klikpajak_invoice_status == "NORMAL"
+                or record.klikpajak_invoice_status == "NORMAL_SUB"
+            ) and record.klikpajak_approval_status == "DRAFT":
+                record.klik_pajak_approve_ok = True
+
+    @api.multi
+    def action_klikpajak_submit_sale_invoice(self):
+        for record in self:
+            record._klikpajak_submit_sale_invoice()
+
+    @api.multi
+    def action_klikpajak_resubmit_sale_invoice(self):
+        for record in self:
+            record._klikpajak_resubmit_sale_invoice()
+
+    @api.multi
+    def action_klikpajak_approve_sale_invoice(self):
+        for record in self:
+            record._klikpajak_approve_sale_invoice()
+
+    @api.multi
+    def action_klikpajak_redownload_pdf(self):
+        for record in self:
+            record._klikpajak_redownload_pdf()
+
+    @api.multi
+    def action_klikpajak_cancel_sale_invoice(self):
+        for record in self:
+            record._klikpajak_cancel_sale_invoice()
 
     @api.multi
     def _prepare_klikpajak_json_data(self):
@@ -117,21 +188,6 @@ class AccountInvoice(models.Model):
         return result
 
     @api.multi
-    def action_klikpajak_submit_sale_invoice(self):
-        for record in self:
-            record._klikpajak_submit_sale_invoice()
-
-    @api.multi
-    def action_klikpajak_approve_sale_invoice(self):
-        for record in self:
-            record._klikpajak_approve_sale_invoice()
-
-    @api.multi
-    def action_klikpajak_redownload_pdf(self):
-        for record in self:
-            record._klikpajak_redownload_pdf()
-
-    @api.multi
     def _klikpajak_redownload_pdf(self):
         self.ensure_one()
         attachment = self._get_klikpajak_pdf(self.klikpajak_invoice_link)
@@ -144,21 +200,26 @@ class AccountInvoice(models.Model):
         url = url.replace("preview", "pdf")
         url = url.replace("public", "public/api")
         IrAttachment = self.env["ir.attachment"]
-        r = requests.get(url, allow_redirects=True)
-        b64_pdf = base64.b64encode(r.content)
-        filename = "efaktur_" + self.nomor_seri_id.name
-        ir_values = {
-            "name": filename,
-            "type": "binary",
-            "datas": b64_pdf,
-            "datas_fname": filename + ".pdf",
-            "store_fname": filename,
-            "res_model": self._name,
-            "res_id": self.id,
-            "mimetype": "application/x-pdf",
-        }
-        attachment = IrAttachment.create(ir_values)
-        return attachment
+        try:
+            r = requests.get(url, allow_redirects=True)
+            b64_pdf = base64.b64encode(r.content)
+            filename = "efaktur_" + self.nomor_seri_id.name
+            ir_values = {
+                "name": filename,
+                "type": "binary",
+                "datas": b64_pdf,
+                "datas_fname": filename + ".pdf",
+                "store_fname": filename,
+                "res_model": self._name,
+                "res_id": self.id,
+                "mimetype": "application/x-pdf",
+            }
+            attachment = IrAttachment.create(ir_values)
+            return attachment
+        except Exception as err:
+            msg_err = _("%s") % (err)
+            resp_message = msg_err
+            raise UserError(resp_message)
 
     @api.multi
     def _post_klikpajak_pdf(self, attachment):
@@ -167,6 +228,94 @@ class AccountInvoice(models.Model):
         self.message_post(
             body=message, message_type="notification", attachment_ids=[attachment.id]
         )
+
+    @api.multi
+    def _get_klikpajak_cancel_sale_invoice_url(self):
+        self.ensure_one()
+        if not self.company_id.klikpajak_cancel_sale_invoice_url:
+            message = _("No cancel efaktur URL defined")
+            raise UserError(message)
+
+        return self.company_id.klikpajak_cancel_sale_invoice_url.replace(
+            ":id", str(self.klikpajak_id)
+        )
+
+    @api.multi
+    def _klikpajak_cancel_sale_invoice(self):
+        self.ensure_one()
+
+        base_url = self.company_id.klikpajak_base_url
+        api_url = self._get_klikpajak_cancel_sale_invoice_url()
+        headers = self._get_klikpajak_sale_invoice_header(api_url, "PUT")
+        api_url = base_url + api_url
+
+        response = requests.put(api_url, headers=headers)
+
+        if response.status_code == 201 or response.status_code == 200:
+            response_json = json.loads(response.text)
+            data = response_json["data"]
+            self.write(
+                {
+                    "klikpajak_invoice_status": data["invoice_status"],
+                    "klikpajak_approval_status": data["approval_status"],
+                    "klikpajak_qrcode_link": data["qr_code"],
+                    "klikpajak_invoice_link": data["tax_invoice_link"],
+                }
+            )
+        else:
+            str_error = """Response code: {}
+
+            {}""".format(
+                response.status_code,
+                response.text,
+            )
+
+            raise UserError(str_error)
+
+    @api.multi
+    def _klikpajak_resubmit_sale_invoice(self):
+        self.ensure_one()
+        base_url = self.company_id.klikpajak_base_url
+        sale_invoice_url = self.company_id.klikpajak_sale_invoice_url
+        api_url = base_url + sale_invoice_url
+        headers = self._get_klikpajak_sale_invoice_header(sale_invoice_url, "POST")
+        params = self.company_id._get_klikpajak_sale_invoice_params()
+        json_data = self._prepare_klikpajak_json_data()
+        json_data.update(
+            {
+                "substitution_flag": True,
+                "substituted_faktur_id": self.klikpajak_id,
+            }
+        )
+
+        response = requests.post(
+            api_url, params=params, headers=headers, json=json_data
+        )
+
+        if response.status_code == 201 or response.status_code == 200:
+            response_json = json.loads(response.text)
+            data = response_json["data"]
+            self.write(
+                {
+                    "klikpajak_id": data["id"],
+                    "klikpajak_invoice_status": data["invoice_status"],
+                    "klikpajak_approval_status": data["approval_status"],
+                    "klikpajak_qrcode_link": data["qr_code"],
+                    "klikpajak_invoice_link": data["tax_invoice_link"],
+                }
+            )
+            attachment = self._get_klikpajak_pdf(self.klikpajak_invoice_link)
+            if attachment:
+                self._post_klikpajak_pdf(attachment)
+        else:
+            str_error = """Response code: {}
+
+            {}""".format(
+                response.status_code,
+                response.text,
+            )
+
+            raise UserError(str_error)
 
     @api.multi
     def _klikpajak_approve_sale_invoice(self):
@@ -276,15 +425,15 @@ class AccountInvoice(models.Model):
 
             raise UserError(str_error)
 
-    @api.multi
-    def action_cancel(self):
-        _super = super(AccountInvoice, self)
-        for document in self:
-            if document.klikpajak_id > 0:
-                msg_error = (
-                    "The invoice cannot be canceled "
-                    "because it already has a 'Faktur Pajak'"
-                )
-                raise UserError(msg_error)
-            else:
-                return _super.action_cancel()
+    # @api.multi
+    # def action_cancel(self):
+    #     _super = super(AccountInvoice, self)
+    #     for document in self:
+    #         if document.klikpajak_id > 0:
+    #             msg_error = (
+    #                 "The invoice cannot be canceled "
+    #                 "because it already has a 'Faktur Pajak'"
+    #             )
+    #             raise UserError(msg_error)
+    #         else:
+    #             return _super.action_cancel()

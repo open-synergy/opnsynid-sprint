@@ -35,6 +35,10 @@ class KlikPajaksettings(models.TransientModel):
         string="Klikpajak Sale Invoice URL",
         related="company_id.klikpajak_sale_invoice_url",
     )
+    klikpajak_cancel_sale_invoice_url = fields.Char(
+        string="Klikpajak Cancel Sale Invoice URL",
+        related="company_id.klikpajak_cancel_sale_invoice_url",
+    )
     klik_pajak_exclude_product_ids = fields.Many2many(
         string="Klikpajak Exclude Product",
         comodel_name="product.product",

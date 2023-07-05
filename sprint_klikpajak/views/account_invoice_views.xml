@@ -11,32 +11,43 @@
       <field name="arch" type="xml">
           <data>
               <xpath expr="//group[@name='taxform_2']" position="before">
-                  <group name="klikpajak" string="Klikpajak" colspan="4" col="2">
-                      <field name="klikpajak_id" string="ID" />
-                      <button
-                                name="action_klikpajak_submit_sale_invoice"
-                                type="object"
-                                string="Submit"
-                                class="oe_highlight"
-                                colspan="2"
-                                attrs="{'invisible':['|', ('lock_taxform','!=',True), ('klikpajak_id','!=',0)]}"
-                            />
-                        <button
-                                name="action_klikpajak_approve_sale_invoice"
-                                type="object"
-                                string="Approve"
-                                class="oe_highlight"
-                                colspan="2"
-                                attrs="{'invisible':['|',('klikpajak_approval_status','=','APPROVED'),('klikpajak_id','=',0)]}"
-                            />
-                        <!-- TODO -->
-                        <!-- <button
-                            name="action_klikpajak_redownload_pdf"
+                    <button
+                            name="action_klikpajak_submit_sale_invoice"
                             type="object"
-                            string="Redownload"
+                            string="Submit"
                             class="oe_highlight"
                             colspan="2"
-                        />                         -->
+                            attrs="{'invisible':[('klik_pajak_submit_ok','=',False)]}"
+                        />
+                    <button
+                            name="action_klikpajak_approve_sale_invoice"
+                            type="object"
+                            string="Approve"
+                            class="oe_highlight"
+                            colspan="2"
+                            attrs="{'invisible':[('klik_pajak_approve_ok','=',False)]}"
+                        />
+                    <button
+                            name="action_klikpajak_cancel_sale_invoice"
+                            type="object"
+                            string="Cancel"
+                            colspan="2"
+                            attrs="{'invisible':[('klik_pajak_cancel_ok','=',False)]}"
+                        />
+                    <button
+                            name="action_klikpajak_resubmit_sale_invoice"
+                            type="object"
+                            string="Resubmit"
+                            colspan="2"
+                            attrs="{'invisible':[('klik_pajak_resubmit_ok','=',False)]}"
+                        />
+                  <group name="klikpajak" string="Klikpajak" colspan="4" col="2">
+
+                      <field name="klikpajak_id" string="ID" />
+                      <field name="klik_pajak_submit_ok" invisible="1" />
+                      <field name="klik_pajak_approve_ok" invisible="1" />
+                      <field name="klik_pajak_cancel_ok" invisible="1" />
+                      <field name="klik_pajak_resubmit_ok" invisible="1" />
                       <field name="klikpajak_invoice_status" string="Invoice Status" />
                       <field
                                 name="klikpajak_approval_status"
