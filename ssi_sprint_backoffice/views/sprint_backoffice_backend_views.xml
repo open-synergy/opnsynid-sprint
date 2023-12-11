@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Copyright 2023 OpenSynergy Indonesia-->
+<!--Copyright 2023 PT. Simetri Sinergi Indonesia-->
+<!--License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).-->
+<odoo>
+<record id="sprint_backoffice_backend_view_tree" model="ir.ui.view">
+    <field name="name">sprint_backoffice_backend - Tree</field>
+    <field name="model">sprint_backoffice_backend</field>
+    <field name="inherit_id" ref="ssi_master_data_mixin.mixin_master_data_view_tree" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data />
+    </field>
+</record>
+
+<record id="sprint_backoffice_backend_view_search" model="ir.ui.view">
+    <field name="name">sprint_backoffice_backend - Search</field>
+    <field name="model">sprint_backoffice_backend</field>
+    <field
+            name="inherit_id"
+            ref="ssi_master_data_mixin.mixin_master_data_view_search"
+        />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data />
+    </field>
+</record>
+
+<record id="sprint_backoffice_backend_view_form" model="ir.ui.view">
+    <field name="name">sprint_backoffice_backend - Form</field>
+    <field name="model">sprint_backoffice_backend</field>
+    <field name="inherit_id" ref="ssi_master_data_mixin.mixin_master_data_view_form" />
+    <field name="priority">100</field>
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//header" position="inside">
+                <button
+                        name="action_running"
+                        string="Running"
+                        type="object"
+                        attrs="{'invisible':[('state','=','running')]}"
+                    />
+                <button
+                        name="action_restart"
+                        string="Restart"
+                        type="object"
+                        attrs="{'invisible':[('state','!=','running')]}"
+                    />
+                <field name="state" widget="statusbar" />
+            </xpath>
+            <xpath expr="//group[@name='group_1']" position="replace">
+                <group name="header" colspan="4" col="2">
+                    <group name="header_left" colspan="1" col="2">
+                        <field name="name" />
+                        <field name="code" />
+                        <field name="company_id" groups="base.group_multi_company" />
+                        <field name="active" widget="boolean_toggle" />
+                    </group>
+                    <group name="api" string="API" colspan="1" col="2">
+                        <field name="base_url" />
+                    </group>
+                </group>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="sprint_backoffice_backend_action" model="ir.actions.act_window">
+    <field name="name">Sprint Backoffice Backends</field>
+    <field name="res_model">sprint_backoffice_backend</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+
+<menuitem
+        id="sprint_backoffice_backend_menu"
+        name="Backends"
+        parent="sprint_backoffice_menu"
+        groups="base.group_system"
+        action="sprint_backoffice_backend_action"
+        sequence="100"
+    />
+</odoo>
