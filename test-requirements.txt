@@ -1,0 +1,2 @@
+odoo14-addon-ssi-master-data-mixin
+odoo14-addon-connector
