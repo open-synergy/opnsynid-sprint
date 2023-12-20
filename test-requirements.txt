@@ -1,2 +1,3 @@
 odoo14-addon-ssi-master-data-mixin
 odoo14-addon-connector
+odoo14-addon-ssi-financial-accounting
