@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+account_move_update_payment_history_all,account_move_update_payment_history – All,model_account_move_update_payment_history,,1,1,1,1
+account_move_cancel_payment_history_all,account_move_cancel_payment_history – All,model_account_move_cancel_payment_history,,1,1,1,1
+account_move_update_print_info_all,account_move_update_print_info – All,model_account_move_update_print_info,,1,1,1,1

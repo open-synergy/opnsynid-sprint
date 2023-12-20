@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Copyright 2023 OpenSynergy Indonesia-->
+<!--Copyright 2023 PT. Simetri Sinergi Indonesia-->
+<!--License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).-->
+<odoo>
+<record id="account_move_view_form" model="ir.ui.view">
+    <field name="name">account.move - Form</field>
+    <field name="model">account.move</field>
+    <field name="inherit_id" ref="account.view_move_form" />
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//notebook" position="inside">
+                <page
+                        string="Update/Cancel Payment"
+                        attrs="{'invisible': [('move_type', '&lt;&gt;', 'out_invoice')]}"
+                    >
+                    <separator string="Update Payment History" colspan="4" />
+                    <button
+                            name="action_manual_update_payment"
+                            string="Update Payment"
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel', 'paid'])]}"
+                        />
+                    <group>
+                        <field name="update_payment_history_ids" nolabel="1">
+                            <tree>
+                                <field name="date" />
+                                <field name="source" />
+                                <field name="status_code" />
+                                <field name="status_msg" />
+                            </tree>
+                        </field>
+                    </group>
+                    <separator string="Cancel Payment History" colspan="4" />
+                    <button
+                            name="action_manual_cancel_payment"
+                            string="Cancel Payment"
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel', 'paid'])]}"
+                        />
+                    <group>
+                        <field name="cancel_payment_history_ids" nolabel="1">
+                            <tree>
+                                <field name="date" />
+                                <field name="source" />
+                                <field name="status_code" />
+                                <field name="status_msg" />
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+                <page
+                        string="Update Print Info"
+                        attrs="{'invisible': [('move_type', '&lt;&gt;', 'out_invoice')]}"
+                    >
+                    <button
+                            name="action_manual_update_print_info"
+                            string="Update Print Info"
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'cancel', 'paid'])]}"
+                        />
+                    <group>
+                    <field name="update_print_info_ids" nolabel="1">
+                        <tree>
+                            <field name="date" />
+                            <field name="source" />
+                            <field name="status_code" />
+                            <field name="status_msg" />
+                        </tree>
+                    </field>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//group[@name='accounting_info_group']" position="after">
+                <group
+                        string="Backoffice"
+                        name="sprint_backoffice"
+                        groups="base.group_system"
+                    >
+                    <field name="sprint_backoffice_backend_id" />
+                </group>
+            </xpath>
+        </data>
+    </field>
+</record>
+</odoo>
