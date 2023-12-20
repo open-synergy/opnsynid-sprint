@@ -4,5 +4,6 @@
 
 from . import (
     sprint_backoffice_backend,
+    sprint_backoffice_mixin,
     res_company,
 )
