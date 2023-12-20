@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Copyright 2023 OpenSynergy Indonesia-->
+<!--Copyright 2023 PT. Simetri Sinergi Indonesia-->
+<!--License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).-->
+<odoo>
+<record id="sprint_backoffice_backend_view_form" model="ir.ui.view">
+    <field name="name">sprint_backoffice_backend - Form</field>
+    <field name="model">sprint_backoffice_backend</field>
+    <field
+            name="inherit_id"
+            ref="ssi_sprint_backoffice.sprint_backoffice_backend_view_form"
+        />
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//page[@name='note']" position="before">
+                <page name="account_move" string="Invoice">
+                    <group name="account_move_1" colspan="4" col="2">
+                        <separator name="account_move_api" string="API" />
+                        <field name="api_invoice_up" />
+                        <field name="api_invoice_cp" />
+                        <field name="api_invoice_pi" />
+                        <separator name="account_move_config" string="Configurations" />
+                        <field name="pph_23_account_ids" widget="many2many_tags" />
+                    </group>
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+</odoo>
