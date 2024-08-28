@@ -79,10 +79,12 @@ class AccountInvoice(models.Model):
         _super = super(AccountInvoice, self)
         res = _super.action_number()
         for document in self:
-            document._update_print_info()
+            if document.type == "out_invoice":
+                document._update_print_info()
         return res
 
     @api.multi
     def action_manual_update_print_info(self):
         for document in self:
-            document._update_print_info()
+            if document.type == "out_invoice":
+                document._update_print_info()
