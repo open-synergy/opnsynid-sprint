@@ -171,15 +171,18 @@ class AccountInvoice(models.Model):
         _super = super(AccountInvoice, self)
         res = _super.action_number()
         for document in self:
-            document._update_payment("Invoice Validation")
+            if document.type == "out_invoice":
+                document._update_payment("Invoice Validation")
         return res
 
     @api.multi
     def action_manual_update_payment(self):
         for document in self:
-            document._update_payment("Manual Update")
+            if document.type == "out_invoice":
+                document._update_payment("Manual Update")
 
     @api.multi
     def action_manual_cancel_payment(self):
         for document in self:
-            document._cancel_payment("Manual Update")
+            if document.type == "out_invoice":
+                document._cancel_payment("Manual Update")
