@@ -19,7 +19,7 @@ Available addons
 addon | version | maintainers | summary
 --- | --- | --- | ---
 [ssi_sprint_backoffice](ssi_sprint_backoffice/) | 14.0.1.1.0 |  | Sprint Back Office
-[ssi_sprint_backoffice_account_move](ssi_sprint_backoffice_account_move/) | 14.0.1.0.0 |  | Sprint Back Office - Account Move
+[ssi_sprint_backoffice_account_move](ssi_sprint_backoffice_account_move/) | 14.0.1.1.0 |  | Sprint Back Office - Account Move
 
 [//]: # (end addons)
 
