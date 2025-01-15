@@ -4,7 +4,7 @@
 import requests
 from requests.exceptions import HTTPError
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 
 
 class AccountMove(models.Model):
@@ -14,6 +14,19 @@ class AccountMove(models.Model):
         "sprint_backoffice_mixin",
     ]
 
+    customer_code = fields.Char(
+        string="Customer Code",
+    )
+    email_cc = fields.Char(
+        string="CC",
+    )
+    urgent = fields.Boolean(
+        string="Urgent",
+        default=False,
+    )
+    urgency_note = fields.Text(
+        string="Urgency Note",
+    )
     update_payment_history_ids = fields.One2many(
         string="Update Payment History",
         comodel_name="account_move_update_payment_history",
@@ -32,6 +45,13 @@ class AccountMove(models.Model):
         inverse_name="move_id",
         readonly=True,
     )
+
+    @api.onchange(
+        "urgent",
+    )
+    def onchange_urgency_note(self):
+        if not self.urgent:
+            self.urgency_note = ""
 
     # UPDATE PAYMENT
     def _get_pph_23_amount(self):
