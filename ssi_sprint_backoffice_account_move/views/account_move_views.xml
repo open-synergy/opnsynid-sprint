@@ -9,6 +9,10 @@
     <field name="inherit_id" ref="account.view_move_form" />
     <field name="arch" type="xml">
         <data>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="customer_code" />
+                <field name="email_cc" />
+            </xpath>
             <xpath expr="//notebook" position="inside">
                 <page
                         string="Update/Cancel Payment"
@@ -78,6 +82,10 @@
                         groups="base.group_system"
                     >
                     <field name="sprint_backoffice_backend_id" />
+                </group>
+                <group>
+                    <field name="urgent" />
+                    <field name="urgency_note" />
                 </group>
             </xpath>
         </data>
