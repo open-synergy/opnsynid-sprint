@@ -27,6 +27,7 @@ class AccountMoveLine(models.Model):
 
     def remove_move_reconcile(self):
         _super = super(AccountMoveLine, self)
+        res = _super.remove_move_reconcile()
         for document in self:
             invoices = document.matched_debit_ids.mapped("debit_move_id").filtered(
                 lambda x: x.move_id.move_type == "out_invoice"
@@ -34,9 +35,11 @@ class AccountMoveLine(models.Model):
             invoices += document.matched_credit_ids.mapped("credit_move_id").filtered(
                 lambda x: x.move_id.move_type == "out_invoice"
             )
-        res = _super.remove_move_reconcile()
-        for invoice in invoices:
-            description = "Cancel payment for %s" % (invoice.name)
-            src = "Invoice Payment Cancellation"
-            invoice.move_id.with_delay(description=_(description))._cancel_payment(src)
+        if invoices:
+            for invoice in invoices:
+                description = "Cancel payment for %s" % (invoice.name)
+                src = "Invoice Payment Cancellation"
+                invoice.move_id.with_delay(description=_(description))._cancel_payment(
+                    src
+                )
         return res
