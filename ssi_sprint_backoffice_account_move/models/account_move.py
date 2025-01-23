@@ -67,8 +67,9 @@ class AccountMove(models.Model):
 
     def _prepare_update_payment_data(self):
         self.ensure_one()
+        xmlid = self.export_data(['id']).get('datas')[0][0] 
         return {
-            "id": self.id,
+            "id": xmlid,
             "no_invoice": self.name,
             "total": self.amount_total,
             "payment": (self.amount_total - self.amount_residual),
@@ -149,8 +150,9 @@ class AccountMove(models.Model):
 
     def _prepare_cancel_payment_data(self):
         self.ensure_one()
+        xmlid = self.export_data(['id']).get('datas')[0][0]
         return {
-            "id": self.id,
+            "id": xmlid,
             "no_invoice": self.name,
             "total": self.amount_total,
             "payment": (self.amount_total - self.amount_residual),
@@ -221,8 +223,9 @@ class AccountMove(models.Model):
     # UPDATE PRINT INFO
     def _prepare_update_print_info(self):
         self.ensure_one()
+        xmlid = self.export_data(['id']).get('datas')[0][0]
         return {
-            "id": self.id,
+            "id": xmlid,
             "no_inv": self.name,
             "print_date": self.invoice_date,
             "due_date": self.invoice_date_due,
