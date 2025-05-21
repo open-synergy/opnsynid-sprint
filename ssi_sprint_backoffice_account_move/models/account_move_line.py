@@ -17,12 +17,6 @@ class AccountMoveLine(models.Model):
                 document.move_id.with_delay(description=_(description))._update_payment(
                     src
                 )
-
-                description = "Update print info for %s" % (document.name)
-                src = "Invoice Payment"
-                document.move_id.with_delay(
-                    description=_(description)
-                )._update_print_info(src)
         return res
 
     def remove_move_reconcile(self):
