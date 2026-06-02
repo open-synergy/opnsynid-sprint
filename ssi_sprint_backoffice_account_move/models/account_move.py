@@ -2,9 +2,14 @@
 # Copyright 2022 PT. Simetri Sinergi Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import requests
-from requests.exceptions import HTTPError
 
 from odoo import _, api, fields, models
+
+from odoo.addons.queue_job.exception import RetryableJobError
+
+# Timeout settings
+CONNECT_TIMEOUT = 10  # detik untuk membuka koneksi
+READ_TIMEOUT = 30  # detik menunggu respons
 
 
 class AccountMove(models.Model):
@@ -67,7 +72,7 @@ class AccountMove(models.Model):
 
     def _prepare_update_payment_data(self):
         self.ensure_one()
-        xmlid = self.export_data(['id']).get('datas')[0][0] 
+        xmlid = self.export_data(["id"]).get("datas")[0][0]
         return {
             "id": xmlid,
             "no_invoice": self.name,
@@ -91,6 +96,7 @@ class AccountMove(models.Model):
 
     def _update_payment(self, src, **kwargs):
         self.ensure_one()
+        history_created = False
         response = None
         headers = {}
         resp_code = ""
@@ -106,17 +112,59 @@ class AccountMove(models.Model):
                     params[key] = value
 
         try:
-            response = requests.request("POST", url, headers=headers, params=params)
+            response = requests.request(
+                "POST",
+                url,
+                headers=headers,
+                params=params,
+                timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),  # ✅ Fix Bug #1
+            )
+            response.raise_for_status()
         except requests.exceptions.Timeout:
-            msg_err = _("Timeout: the server did not reply within 30s")
+            # ✅ Sekarang benar-benar ter-trigger
+            msg_err = _("Timeout: the server did not reply within %ss") % READ_TIMEOUT
             resp_code = "TO"
             resp_message = msg_err
-        except HTTPError as e:
+            obj_history.create(
+                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+            )
+            history_created = True
+            raise RetryableJobError(  # ✅ Fix Bug #5: retry otomatis
+                msg_err,
+                seconds=60,
+                ignore_retry=False,
+            )
+        except requests.exceptions.ConnectionError:
+            # ✅ Fix Bug #4: tangani koneksi gagal secara spesifik
+            msg_err = _("Connection error: could not reach the API server")
+            resp_code = "CE"
+            resp_message = msg_err
+            obj_history.create(
+                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+            )
+            history_created = True
+            raise RetryableJobError(msg_err, seconds=120)
+        except requests.exceptions.HTTPError as e:
+            # ✅ Fix Bug #2: sekarang ter-trigger karena ada raise_for_status()
             resp_code = response.status_code
-            resp_message = e.response.text
-        except BaseException as err:
+            resp_message = str(e)
+            if resp_code >= 500:
+                # Server error → retry
+                obj_history.create(
+                    self._prepare_update_payment_history_data(
+                        resp_code, resp_message, src
+                    )
+                )
+                history_created = True
+                raise RetryableJobError(
+                    _("API server error %s, will retry") % resp_code,
+                    seconds=300,
+                )
+            # Client error 4xx → langsung fail, jangan retry
+        except Exception as err:
+            # ✅ Fix Bug #3: Exception bukan BaseException
             msg_err = _("%s") % (err)
-            resp_code = "BaseException"
+            resp_code = "ERR"
             resp_message = msg_err
 
         if response:
@@ -128,9 +176,10 @@ class AccountMove(models.Model):
                 resp_code = response.status_code
                 resp_message = response.reason
 
-        obj_history.create(
-            self._prepare_update_payment_history_data(resp_code, resp_message, src)
-        )
+        if not history_created:  # ← hanya buat jika belum ada
+            obj_history.create(
+                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+            )
 
     def action_manual_update_payment(self):
         for document in self:
@@ -150,7 +199,7 @@ class AccountMove(models.Model):
 
     def _prepare_cancel_payment_data(self):
         self.ensure_one()
-        xmlid = self.export_data(['id']).get('datas')[0][0]
+        xmlid = self.export_data(["id"]).get("datas")[0][0]
         return {
             "id": xmlid,
             "no_invoice": self.name,
@@ -164,6 +213,7 @@ class AccountMove(models.Model):
 
     def _cancel_payment(self, src, **kwargs):
         self.ensure_one()
+        history_created = False
         response = None
         headers = {}
         obj_history = self.env["account_move_cancel_payment_history"]
@@ -179,17 +229,49 @@ class AccountMove(models.Model):
                     params[key] = value
 
         try:
-            response = requests.request("POST", url, headers=headers, params=params)
+            response = requests.request(
+                "POST",
+                url,
+                headers=headers,
+                params=params,
+                timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),  # ✅ Fix Bug #1
+            )
+            response.raise_for_status()  # ✅ Fix Bug #2
         except requests.exceptions.Timeout:
-            msg_err = _("Timeout: the server did not reply within 30s")
+            msg_err = _("Timeout: the server did not reply within %ss") % READ_TIMEOUT
             resp_code = "TO"
             resp_message = msg_err
-        except HTTPError as e:
+            obj_history.create(
+                self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
+            )
+            history_created = True
+            raise RetryableJobError(msg_err, seconds=60)  # ✅ Fix Bug #5
+        except requests.exceptions.ConnectionError:
+            msg_err = _("Connection error: could not reach the API server")
+            resp_code = "CE"
+            resp_message = msg_err
+            obj_history.create(
+                self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
+            )
+            history_created = True
+            raise RetryableJobError(msg_err, seconds=120)  # ✅ Fix Bug #4
+        except requests.exceptions.HTTPError as e:
             resp_code = response.status_code
-            resp_message = e.response.text
-        except BaseException as err:
+            resp_message = str(e)
+            if resp_code >= 500:
+                obj_history.create(
+                    self._prepare_cancel_payment_history_data(
+                        resp_code, resp_message, src
+                    )
+                )
+                history_created = True
+                raise RetryableJobError(
+                    _("API server error %s, will retry") % resp_code,
+                    seconds=300,
+                )
+        except Exception as err:  # ✅ Fix Bug #3
             msg_err = _("%s") % (err)
-            resp_code = "BaseException"
+            resp_code = "ERR"
             resp_message = msg_err
 
         if response:
@@ -201,9 +283,10 @@ class AccountMove(models.Model):
                 resp_code = response.status_code
                 resp_message = response.reason
 
-        obj_history.create(
-            self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
-        )
+        if not history_created:  # ← hanya buat jika belum ada
+            obj_history.create(
+                self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
+            )
 
     def action_manual_cancel_payment(self):
         for document in self:
@@ -223,7 +306,7 @@ class AccountMove(models.Model):
     # UPDATE PRINT INFO
     def _prepare_update_print_info(self):
         self.ensure_one()
-        xmlid = self.export_data(['id']).get('datas')[0][0]
+        xmlid = self.export_data(["id"]).get("datas")[0][0]
         return {
             "id": xmlid,
             "no_inv": self.name,
@@ -243,6 +326,7 @@ class AccountMove(models.Model):
 
     def _update_print_info(self, src, **kwargs):
         self.ensure_one()
+        history_created = False
         response = None
         obj_history = self.env["account_move_update_print_info"]
         resp_code = ""
@@ -258,17 +342,47 @@ class AccountMove(models.Model):
                     params[key] = value
 
         try:
-            response = requests.request("POST", url, headers=headers, params=params)
+            response = requests.request(
+                "POST",
+                url,
+                headers=headers,
+                params=params,
+                timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),  # ✅ Fix Bug #1
+            )
+            response.raise_for_status()  # ✅ Fix Bug #2
         except requests.exceptions.Timeout:
-            msg_err = _("Timeout: the server did not reply within 30s")
-            resp_code = "Timeout"
+            msg_err = _("Timeout: the server did not reply within %ss") % READ_TIMEOUT
+            resp_code = "TO"
             resp_message = msg_err
-        except HTTPError as e:
+            obj_history.create(
+                self._prepare_update_print_info_data(resp_code, resp_message, src)
+            )
+            history_created = True
+            raise RetryableJobError(msg_err, seconds=60)  # ✅ Fix Bug #5
+        except requests.exceptions.ConnectionError:
+            msg_err = _("Connection error: could not reach the API server")
+            resp_code = "CE"
+            resp_message = msg_err
+            obj_history.create(
+                self._prepare_update_print_info_data(resp_code, resp_message, src)
+            )
+            history_created = True
+            raise RetryableJobError(msg_err, seconds=120)  # ✅ Fix Bug #4
+        except requests.exceptions.HTTPError as e:
             resp_code = response.status_code
-            resp_message = e.response.text
-        except BaseException as err:
+            resp_message = str(e)
+            if resp_code >= 500:
+                obj_history.create(
+                    self._prepare_update_print_info_data(resp_code, resp_message, src)
+                )
+                history_created = True
+                raise RetryableJobError(
+                    _("API server error %s, will retry") % resp_code,
+                    seconds=300,
+                )
+        except Exception as err:  # ✅ Fix Bug #3
             msg_err = _("%s") % (err)
-            resp_code = "BaseException"
+            resp_code = "ERR"
             resp_message = msg_err
 
         if response:
@@ -280,9 +394,10 @@ class AccountMove(models.Model):
                 resp_code = response.status_code
                 resp_message = response.reason
 
-        obj_history.create(
-            self._prepare_update_print_info_data(resp_code, resp_message, src)
-        )
+        if not history_created:  # ← hanya buat jika belum ada
+            obj_history.create(
+                self._prepare_update_print_info_data(resp_code, resp_message, src)
+            )
 
     def action_manual_update_print_info(self):
         for document in self:
