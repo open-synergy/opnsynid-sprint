@@ -96,6 +96,7 @@ class AccountMove(models.Model):
 
     def _update_payment(self, src, **kwargs):
         self.ensure_one()
+        history_created = False
         response = None
         headers = {}
         resp_code = ""
@@ -127,6 +128,7 @@ class AccountMove(models.Model):
             obj_history.create(
                 self._prepare_update_payment_history_data(resp_code, resp_message, src)
             )
+            history_created = True
             raise RetryableJobError(  # ✅ Fix Bug #5: retry otomatis
                 msg_err,
                 seconds=60,
@@ -140,6 +142,7 @@ class AccountMove(models.Model):
             obj_history.create(
                 self._prepare_update_payment_history_data(resp_code, resp_message, src)
             )
+            history_created = True
             raise RetryableJobError(msg_err, seconds=120)
         except requests.exceptions.HTTPError as e:
             # ✅ Fix Bug #2: sekarang ter-trigger karena ada raise_for_status()
@@ -152,6 +155,7 @@ class AccountMove(models.Model):
                         resp_code, resp_message, src
                     )
                 )
+                history_created = True
                 raise RetryableJobError(
                     _("API server error %s, will retry") % resp_code,
                     seconds=300,
@@ -172,9 +176,10 @@ class AccountMove(models.Model):
                 resp_code = response.status_code
                 resp_message = response.reason
 
-        obj_history.create(
-            self._prepare_update_payment_history_data(resp_code, resp_message, src)
-        )
+        if not history_created:  # ← hanya buat jika belum ada
+            obj_history.create(
+                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+            )
 
     def action_manual_update_payment(self):
         for document in self:
@@ -208,6 +213,7 @@ class AccountMove(models.Model):
 
     def _cancel_payment(self, src, **kwargs):
         self.ensure_one()
+        history_created = False
         response = None
         headers = {}
         obj_history = self.env["account_move_cancel_payment_history"]
@@ -238,6 +244,7 @@ class AccountMove(models.Model):
             obj_history.create(
                 self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
             )
+            history_created = True
             raise RetryableJobError(msg_err, seconds=60)  # ✅ Fix Bug #5
         except requests.exceptions.ConnectionError:
             msg_err = _("Connection error: could not reach the API server")
@@ -246,6 +253,7 @@ class AccountMove(models.Model):
             obj_history.create(
                 self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
             )
+            history_created = True
             raise RetryableJobError(msg_err, seconds=120)  # ✅ Fix Bug #4
         except requests.exceptions.HTTPError as e:
             resp_code = response.status_code
@@ -256,6 +264,7 @@ class AccountMove(models.Model):
                         resp_code, resp_message, src
                     )
                 )
+                history_created = True
                 raise RetryableJobError(
                     _("API server error %s, will retry") % resp_code,
                     seconds=300,
@@ -274,9 +283,10 @@ class AccountMove(models.Model):
                 resp_code = response.status_code
                 resp_message = response.reason
 
-        obj_history.create(
-            self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
-        )
+        if not history_created:  # ← hanya buat jika belum ada
+            obj_history.create(
+                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+            )
 
     def action_manual_cancel_payment(self):
         for document in self:
@@ -316,6 +326,7 @@ class AccountMove(models.Model):
 
     def _update_print_info(self, src, **kwargs):
         self.ensure_one()
+        history_created = False
         response = None
         obj_history = self.env["account_move_update_print_info"]
         resp_code = ""
@@ -346,6 +357,7 @@ class AccountMove(models.Model):
             obj_history.create(
                 self._prepare_update_print_info_data(resp_code, resp_message, src)
             )
+            history_created = True
             raise RetryableJobError(msg_err, seconds=60)  # ✅ Fix Bug #5
         except requests.exceptions.ConnectionError:
             msg_err = _("Connection error: could not reach the API server")
@@ -354,6 +366,7 @@ class AccountMove(models.Model):
             obj_history.create(
                 self._prepare_update_print_info_data(resp_code, resp_message, src)
             )
+            history_created = True
             raise RetryableJobError(msg_err, seconds=120)  # ✅ Fix Bug #4
         except requests.exceptions.HTTPError as e:
             resp_code = response.status_code
@@ -362,6 +375,7 @@ class AccountMove(models.Model):
                 obj_history.create(
                     self._prepare_update_print_info_data(resp_code, resp_message, src)
                 )
+                history_created = True
                 raise RetryableJobError(
                     _("API server error %s, will retry") % resp_code,
                     seconds=300,
@@ -380,9 +394,10 @@ class AccountMove(models.Model):
                 resp_code = response.status_code
                 resp_message = response.reason
 
-        obj_history.create(
-            self._prepare_update_print_info_data(resp_code, resp_message, src)
-        )
+        if not history_created:  # ← hanya buat jika belum ada
+            obj_history.create(
+                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+            )
 
     def action_manual_update_print_info(self):
         for document in self:
