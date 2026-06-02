@@ -1,0 +1,269 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ssi_sprint_backoffice_account_move
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__move_id
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__move_id
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__move_id
+msgid "# Invoice"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.sprint_backoffice_backend_view_form
+msgid "API"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#, python-format
+msgid "API server error %s, will retry"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__sprint_backoffice_backend_id
+msgid "Backend"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.account_move_view_form
+msgid "Backoffice"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_bank_statement_line__email_cc
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__email_cc
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_payment__email_cc
+msgid "CC"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_sprint_backoffice_backend__api_invoice_cp
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.account_move_view_form
+msgid "Cancel Payment"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_bank_statement_line__cancel_payment_history_ids
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__cancel_payment_history_ids
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_payment__cancel_payment_history_ids
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.account_move_view_form
+msgid "Cancel Payment History"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.sprint_backoffice_backend_view_form
+msgid "Configurations"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#, python-format
+msgid "Connection error: could not reach the API server"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__create_uid
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__create_uid
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__create_date
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__create_date
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_bank_statement_line__customer_code
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__customer_code
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_payment__customer_code
+msgid "Customer Code"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__date
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__date
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__date
+msgid "Date"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__display_name
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__display_name
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_line__display_name
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__display_name
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__display_name
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_sprint_backoffice_backend__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__id
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__id
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_line__id
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__id
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__id
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_sprint_backoffice_backend__id
+msgid "ID"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.sprint_backoffice_backend_view_form
+msgid "Invoice"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model,name:ssi_sprint_backoffice_account_move.model_account_move
+msgid "Journal Entry"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model,name:ssi_sprint_backoffice_account_move.model_account_move_line
+msgid "Journal Item"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move____last_update
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history____last_update
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_line____last_update
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history____last_update
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info____last_update
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_sprint_backoffice_backend____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__write_uid
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__write_uid
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__write_date
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__write_date
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_sprint_backoffice_backend__pph_23_account_ids
+msgid "PPh 23 Accounts"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_sprint_backoffice_backend__api_invoice_pi
+msgid "Print Invoice"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__source
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__source
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__source
+msgid "Source"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model,name:ssi_sprint_backoffice_account_move.model_sprint_backoffice_backend
+msgid "Sprint E-Materai Backend"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__status_msg
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__status_msg
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__status_msg
+msgid "Status"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_cancel_payment_history__status_code
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_payment_history__status_code
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move_update_print_info__status_code
+msgid "Status Code"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#: code:addons/ssi_sprint_backoffice_account_move/models/account_move.py:0
+#, python-format
+msgid "Timeout: the server did not reply within %ss"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_sprint_backoffice_backend__api_invoice_up
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.account_move_view_form
+msgid "Update Payment"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_bank_statement_line__update_payment_history_ids
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__update_payment_history_ids
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_payment__update_payment_history_ids
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.account_move_view_form
+msgid "Update Payment History"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.account_move_view_form
+msgid "Update Print Info"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_bank_statement_line__update_print_info_ids
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__update_print_info_ids
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_payment__update_print_info_ids
+msgid "Update Print Info History"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model_terms:ir.ui.view,arch_db:ssi_sprint_backoffice_account_move.account_move_view_form
+msgid "Update/Cancel Payment"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_bank_statement_line__urgency_note
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__urgency_note
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_payment__urgency_note
+msgid "Urgency Note"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_bank_statement_line__urgent
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_move__urgent
+#: model:ir.model.fields,field_description:ssi_sprint_backoffice_account_move.field_account_payment__urgent
+msgid "Urgent"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model,name:ssi_sprint_backoffice_account_move.model_account_move_cancel_payment_history
+msgid "account_move_cancel_payment_history"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model,name:ssi_sprint_backoffice_account_move.model_account_move_update_payment_history
+msgid "account_move_update_payment_history"
+msgstr ""
+
+#. module: ssi_sprint_backoffice_account_move
+#: model:ir.model,name:ssi_sprint_backoffice_account_move.model_account_move_update_print_info
+msgid "account_move_update_print_info"
+msgstr ""
