@@ -285,7 +285,7 @@ class AccountMove(models.Model):
 
         if not history_created:  # ← hanya buat jika belum ada
             obj_history.create(
-                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+                self._prepare_cancel_payment_history_data(resp_code, resp_message, src)
             )
 
     def action_manual_cancel_payment(self):
@@ -396,7 +396,7 @@ class AccountMove(models.Model):
 
         if not history_created:  # ← hanya buat jika belum ada
             obj_history.create(
-                self._prepare_update_payment_history_data(resp_code, resp_message, src)
+                self._prepare_update_print_info_data(resp_code, resp_message, src)
             )
 
     def action_manual_update_print_info(self):
